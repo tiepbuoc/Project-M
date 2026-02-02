@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập - THCS Nguyễn Tri Phương</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            height: 50px;
+            border-radius: 8px;
+        }
+
+        .school-name {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #26a69a;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links a:hover {
+            color: #26a69a;
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, #4CAF50, #2E7D32);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(240,248,255,0.9) 100%);
+            margin: 20px 0;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+        }
+
+        .hero h1 {
+            font-size: 2.8em;
+            color: #26a69a;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #26a69a, #4CAF50);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2em;
+            color: #555;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+
+        .hero-logo {
+            height: 120px;
+            margin-bottom: 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 60px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.2em;
+            color: #26a69a;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #26a69a, #4CAF50);
+            border-radius: 2px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .feature-title {
+            font-size: 1.4em;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        /* Comparison Section */
+        .comparison {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 60px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(45deg, #26a69a, #4CAF50);
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .good {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .bad {
+            color: #f44336;
+            font-weight: 600;
+        }
+
+        /* Game Section */
+        .game-section {
+            padding: 60px 0;
+        }
+
+        .game-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .game-content {
+            padding: 25px;
+        }
+
+        .game-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            color: #4CAF50;
+        }
+
+        .game-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .game-description {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .play-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(45deg, #4CAF50, #2E7D32);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .play-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px 0;
+            margin-top: 60px;
+            border-top: 1px solid #eee;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .copyright {
+            color: #666;
+            font-weight: 500;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            color: #333;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                border-radius: 0 0 15px 15px;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2em;
+            }
+
+            .hero p {
+                font-size: 1em;
+            }
+
+            .section-title {
+                font-size: 1.8em;
+            }
+
+            .comparison {
+                padding: 20px;
+            }
+
+            .comparison-table {
+                font-size: 0.9em;
+            }
+
+            .features-grid,
+            .game-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="nav-container">
+                <div class="logo-container">
+                    <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo trường THCS Nguyễn Tri Phương" class="logo">
+                    <div class="school-name">THCS Nguyễn Tri Phương</div>
+                </div>
+                
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="nav-links" id="navLinks">
+                    <a href="index.html"><i class="fas fa-home"></i> Trang chủ</a>
+                    <a href="auth.html"><i class="fas fa-user"></i> Đăng nhập</a>
+                    <a href="chatbot.html"><i class="fas fa-robot"></i> Chatbot AI</a>
+                    <a href="#features"><i class="fas fa-star"></i> Tính năng</a>
+                    <a href="#games"><i class="fas fa-gamepad"></i> Trò chơi</a>
+                    <a href="chatbot.html" class="cta-button">
+                        <i class="fas fa-rocket"></i> Bắt đầu học
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo trường" class="hero-logo">
+            <h1>Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập</h1>
+            <p>Hệ thống học tập thông minh đầu tiên dành riêng cho học sinh THCS, tích hợp AI tiên tiến giúp cá nhân hóa trải nghiệm học tập</p>
+            <a href="chatbot.html" class="cta-button" style="font-size: 1.1em; padding: 15px 30px;">
+                <i class="fas fa-robot"></i> Trải nghiệm Chatbot AI ngay
+            </a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Tính năng nổi bật</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="feature-title">AI thông minh</h3>
+                    <p>Sử dụng Gemini AI tiên tiến để giải đáp mọi thắc mắc học tập, từ Toán, Văn, Anh đến Khoa học</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-upload"></i>
+                    </div>
+                    <h3 class="feature-title">Đính kèm file</h3>
+                    <p>Gửi ảnh, PDF, Word để AI phân tích và giải đáp chi tiết, như một gia sư thực thụ</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3 class="feature-title">Kiến thức đa dạng</h3>
+                    <p>Hệ thống kiến thức từ lớp 6-9, luôn được cập nhật bởi đội ngũ giáo viên giàu kinh nghiệm</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="comparison">
+        <div class="container">
+            <h2 class="section-title">So sánh với chatbot học tập khác</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Tính năng</th>
+                        <th>Chatbot THCS Nguyễn Tri Phương</th>
+                        <th>Chatbot học tập thông thường</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Chuyên môn hóa</strong></td>
+                        <td class="good">Tập trung vào chương trình THCS Việt Nam</td>
+                        <td class="bad">Chung chung, không theo chương trình cụ thể</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Đính kèm file</strong></td>
+                        <td class="good">Hỗ trợ ảnh, PDF, Word, PowerPoint</td>
+                        <td class="bad">Chỉ hỗ trợ văn bản đơn thuần</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Kiến thức cập nhật</strong></td>
+                        <td class="good">Được cập nhật liên tục bởi giáo viên</td>
+                        <td class="bad">Kiến thức cố định, ít cập nhật</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Phương pháp giảng dạy</strong></td>
+                        <td class="good">Theo phương pháp SGK mới</td>
+                        <td class="bad">Không theo phương pháp cụ thể</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Hỗ trợ đa môn</strong></td>
+                        <td class="good">12 môn học THCS đầy đủ</td>
+                        <td class="bad">Chỉ vài môn chính</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tính cá nhân hóa</strong></td>
+                        <td class="good">Nhớ lịch sử học tập của người dùng</td>
+                        <td class="bad">Không lưu lịch sử</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Game Section -->
+    <section class="game-section" id="games">
+        <div class="container">
+            <h2 class="section-title">Trò chơi giáo dục thông minh</h2>
+            <div class="game-cards">
+                <div class="game-card">
+                    <div class="game-content">
+                        <div class="game-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3 class="game-title">Video dự thi SV - HS khởi nghiệp</h3>
+                        <p class="game-description">Sản phẩm học sinh NTP tham gia SV - HS khởi nghiệp</p>
+                        <a href="https://www.youtube.com/watch?v=bg8pvPreBio" class="play-button" target="_blank">
+                            <i class="fas fa-play-circle"></i> Vào xem ngay
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="game-card">
+                    <div class="game-content">
+                        <div class="game-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h3 class="game-title">Ôn tập kiến thức THCS</h3>
+                        <p class="game-description">Hệ thống kiến thức lớp 6,7,8,9 đầy đủ</p>
+                        <a href="https://ai.studio/apps/drive/13Wzv-zI3tC08XADQXQ1fptXKXOKWg0UJ" class="play-button" target="_blank">
+                            <i class="fas fa-play-circle"></i> Khám phá ngay
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="game-card">
+                    <div class="game-content">
+                        <div class="game-icon">
+                            <i class="fas fa-puzzle-piece"></i>
+                        </div>
+                        <h3 class="game-title">Chinh phục trí thức</h3>
+                        <p class="game-description">Rèn luyện tư duy logic qua các câu đố thông minh</p>
+                        <a href="https://ai.studio/apps/drive/1VrvZM3ytcM1UsPIthfDuJAzr8UJTxbRz?fullscreenApplet=true" class="play-button" target="_blank">
+                            <i class="fas fa-play-circle"></i> Thử thách ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo-container">
+                    <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo" class="logo">
+                    <div class="school-name">THCS Nguyễn Tri Phương</div>
+                </div>
+                <div class="copyright">
+                    @Copyright thuvienhoctap | Hệ thống học tập thông minh
+                </div>
+                <div class="admin-link">
+                    <a href="admin.html" style="color: #26a69a; text-decoration: none;">
+                        <i class="fas fa-cog"></i> Quản trị viên
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            document.getElementById('navLinks').classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const navLinks = document.getElementById('navLinks');
+            const menuBtn = document.getElementById('mobileMenuBtn');
+            
+            if (!navLinks.contains(event.target) && !menuBtn.contains(event.target)) {
+                navLinks.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
