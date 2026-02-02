@@ -39,17 +39,8 @@
         .auth-header {
             background: linear-gradient(135deg, #26a69a, #4CAF50);
             color: white;
-            padding: 40px 30px;
+            padding: 30px;
             text-align: center;
-        }
-
-        .auth-header h1 {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        .auth-header p {
-            opacity: 0.9;
         }
 
         .logo-container {
@@ -57,17 +48,27 @@
             align-items: center;
             justify-content: center;
             gap: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .logo {
-            height: 60px;
+            height: 50px;
             border-radius: 10px;
         }
 
         .school-name {
             font-size: 1.3em;
             font-weight: 700;
+        }
+
+        .auth-header h1 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .auth-header p {
+            opacity: 0.9;
+            font-size: 0.95em;
         }
 
         .auth-tabs {
@@ -95,7 +96,7 @@
         }
 
         .auth-form {
-            padding: 40px 30px;
+            padding: 30px;
         }
 
         .form-group {
@@ -273,7 +274,7 @@
             }
             
             .auth-header {
-                padding: 30px 20px;
+                padding: 25px 20px;
             }
             
             .auth-header h1 {
@@ -281,7 +282,7 @@
             }
             
             .auth-form {
-                padding: 30px 20px;
+                padding: 25px 20px;
             }
             
             .logo-container {
@@ -290,7 +291,7 @@
             }
             
             .logo {
-                height: 50px;
+                height: 45px;
             }
         }
     </style>
@@ -525,6 +526,11 @@
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 const user = userCredential.user;
                 
+                // Update last login time
+                await db.collection('users').doc(user.uid).update({
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
                 showSuccess('Đăng nhập thành công! Chuyển hướng...');
                 
                 // Store user info in localStorage
@@ -534,9 +540,9 @@
                     displayName: user.displayName
                 }));
                 
-                // Redirect to chatbot page after 1.5 seconds
+                // Redirect to index page after 1.5 seconds
                 setTimeout(() => {
-                    window.location.href = 'chatbot.html';
+                    window.location.href = 'index.html';
                 }, 1500);
                 
             } catch (error) {
@@ -571,13 +577,11 @@
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('registerConfirmPassword').value;
             
-            // Validate password match
             if (password !== confirmPassword) {
                 showError('Mật khẩu xác nhận không khớp.');
                 return;
             }
             
-            // Validate password length
             if (password.length < 6) {
                 showError('Mật khẩu phải có ít nhất 6 ký tự.');
                 return;
@@ -590,31 +594,28 @@
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 const user = userCredential.user;
                 
-                // Update user profile
                 await user.updateProfile({
                     displayName: name
                 });
                 
-                // Create user document in Firestore
                 await db.collection('users').doc(user.uid).set({
                     name: name,
                     email: email,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
                     role: 'student'
                 });
                 
                 showSuccess('Đăng ký thành công! Chuyển hướng...');
                 
-                // Store user info in localStorage
                 localStorage.setItem('user', JSON.stringify({
                     uid: user.uid,
                     email: user.email,
                     displayName: name
                 }));
                 
-                // Redirect to chatbot page after 1.5 seconds
                 setTimeout(() => {
-                    window.location.href = 'chatbot.html';
+                    window.location.href = 'index.html';
                 }, 1500);
                 
             } catch (error) {
@@ -645,7 +646,6 @@
             clearMessages();
             showSuccess('Chào mừng bạn đến với hệ thống học tập!');
             
-            // Store guest info in localStorage
             localStorage.setItem('user', JSON.stringify({
                 uid: 'guest_' + Date.now(),
                 email: null,
@@ -653,7 +653,6 @@
                 isGuest: true
             }));
             
-            // Redirect to chatbot page after 1 second
             setTimeout(() => {
                 window.location.href = 'chatbot.html';
             }, 1000);
@@ -662,9 +661,8 @@
         // Check if user is already logged in
         auth.onAuthStateChanged((user) => {
             if (user && !window.location.pathname.includes('chatbot.html')) {
-                // User is signed in, redirect to chatbot
                 setTimeout(() => {
-                    window.location.href = 'chatbot.html';
+                    window.location.href = 'index.html';
                 }, 1000);
             }
         });
