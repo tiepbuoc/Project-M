@@ -23,6 +23,7 @@
             color: #333;
             line-height: 1.6;
             min-height: 100vh;
+            padding-top: 80px; /* Để tránh bị header che */
         }
 
         .container {
@@ -31,7 +32,7 @@
             padding: 0 20px;
         }
 
-        /* Header - CỐ ĐỊNH */
+        /* Header - ĐƠN GIẢN HÓA VÀ CỐ ĐỊNH */
         .header {
             background-color: rgba(255, 255, 255, 0.98);
             box-shadow: 0 2px 15px rgba(0,0,0,0.1);
@@ -39,9 +40,10 @@
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
+            width: 100%;
             z-index: 1000;
             padding: 15px 0;
+            border-bottom: 1px solid #e0e0e0;
         }
 
         .nav-container {
@@ -54,6 +56,12 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .logo-container:hover {
+            opacity: 0.9;
         }
 
         .logo {
@@ -140,6 +148,8 @@
             align-items: center;
             gap: 8px;
             font-size: 0.9em;
+            border: none;
+            cursor: pointer;
         }
 
         .login-btn {
@@ -157,39 +167,11 @@
             background: #f8f9fa;
             color: #666;
             border: 1px solid #dee2e6;
-            padding: 10px;
         }
 
         .logout-btn:hover {
             background: #e9ecef;
             color: #333;
-        }
-
-        .chatbot-btn {
-            background: linear-gradient(45deg, #26a69a, #4CAF50);
-            color: white;
-            box-shadow: 0 4px 15px rgba(38, 166, 154, 0.3);
-        }
-
-        .chatbot-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(38, 166, 154, 0.4);
-        }
-
-        .admin-btn {
-            background: linear-gradient(45deg, #9C27B0, #673AB7);
-            color: white;
-            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
-        }
-
-        .admin-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(156, 39, 176, 0.4);
-        }
-
-        /* Main Content */
-        .main-content {
-            margin-top: 90px;
         }
 
         /* Hero Section */
@@ -225,7 +207,7 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        /* Game Section (Đưa lên trước) */
+        /* Game Section - ĐƯA LÊN TRÊN */
         .game-section {
             padding: 60px 0;
         }
@@ -307,7 +289,7 @@
             box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
         }
 
-        /* Features Section (Sau Game Section) */
+        /* Features Section */
         .features {
             padding: 60px 0;
         }
@@ -336,7 +318,7 @@
         .feature-icon {
             font-size: 3em;
             margin-bottom: 20px;
-            color: #4CAF50;
+            color: #4CAF50; /* Đổi thành màu xanh lá */
         }
 
         .feature-title {
@@ -347,69 +329,54 @@
 
         /* Comparison Table */
         .comparison-section {
-            padding: 60px 0;
-        }
-
-        .comparison-table {
-            background: white;
+            padding: 40px 0;
+            background: #f8f9fa;
             border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             margin-top: 40px;
         }
 
-        .comparison-header {
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .comparison-table th {
             background: linear-gradient(45deg, #26a69a, #4CAF50);
             color: white;
-            padding: 20px;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
             text-align: center;
         }
 
-        .comparison-header h3 {
-            font-size: 1.5em;
-            margin-bottom: 5px;
-        }
-
-        .comparison-content {
-            padding: 20px;
-        }
-
-        .comparison-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .comparison-row.header {
-            font-weight: 600;
+        .comparison-table tr:nth-child(even) {
             background: #f8f9fa;
         }
 
-        .comparison-row:last-child {
-            border-bottom: none;
-        }
-
-        .feature-col {
-            padding: 0 15px;
-        }
-
-        .system-col {
-            text-align: center;
-            padding: 0 15px;
-        }
-
-        .our-system {
+        .comparison-table tr:hover {
             background: #e8f5e9;
-            border-radius: 5px;
-            font-weight: 600;
         }
 
-        .other-system {
-            color: #666;
+        .check-mark {
+            color: #4CAF50;
+            font-weight: bold;
         }
 
-        /* Footer Đơn giản */
+        .cross-mark {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        /* Footer */
         .footer {
             background: rgba(255, 255, 255, 0.95);
             padding: 30px 0;
@@ -424,18 +391,29 @@
             font-size: 0.9em;
         }
 
-        /* Mobile Menu */
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5em;
-            color: #333;
-            cursor: pointer;
+        .admin-link {
+            margin-top: 15px;
+        }
+
+        .admin-link a {
+            color: #26a69a;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+        }
+
+        .admin-link a:hover {
+            text-decoration: underline;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
+            body {
+                padding-top: 70px;
+            }
+            
             .nav-container {
                 flex-wrap: wrap;
             }
@@ -469,16 +447,6 @@
                 grid-template-columns: 1fr;
             }
             
-            .comparison-row {
-                grid-template-columns: 1fr;
-                gap: 10px;
-                text-align: center;
-            }
-            
-            .comparison-row.header {
-                display: none;
-            }
-            
             .user-details {
                 display: none;
             }
@@ -487,8 +455,25 @@
                 display: none;
             }
             
+            /* Trên mobile: nút đăng xuất chỉ hiện icon */
             .logout-btn span {
                 display: none;
+            }
+            
+            .logout-btn {
+                width: 45px;
+                height: 45px;
+                padding: 0;
+                justify-content: center;
+            }
+            
+            .comparison-table {
+                font-size: 0.9em;
+            }
+            
+            .comparison-table th,
+            .comparison-table td {
+                padding: 10px 5px;
             }
         }
 
@@ -516,25 +501,25 @@
                 padding: 40px 20px;
             }
             
-            .main-content {
-                margin-top: 120px;
+            .section-title {
+                font-size: 1.5em;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header Cố định -->
+    <!-- Header ĐƠN GIẢN VÀ CỐ ĐỊNH -->
     <header class="header">
         <div class="container">
             <div class="nav-container">
-                <!-- Logo và tên web -->
-                <div class="logo-container">
+                <!-- Logo và tên web - Click để về trang chủ -->
+                <a href="index.html" class="logo-container">
                     <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo trường THCS Nguyễn Tri Phương" class="logo">
                     <div>
                         <div class="school-name">THCS Nguyễn Tri Phương</div>
                         <div class="web-name">Hệ thống học tập AI</div>
                     </div>
-                </div>
+                </a>
                 
                 <!-- Thông tin người dùng / Nút đăng nhập -->
                 <div class="user-section" id="userSection">
@@ -544,156 +529,152 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="container">
-                <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo trường" class="hero-logo">
-                <h1>Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập</h1>
-                <p>Hệ thống học tập thông minh đầu tiên dành riêng cho học sinh THCS, tích hợp AI tiên tiến giúp cá nhân hóa trải nghiệm học tập</p>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo trường" class="hero-logo">
+            <h1>Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập</h1>
+            <p>Hệ thống học tập thông minh đầu tiên dành riêng cho học sinh THCS, tích hợp AI tiên tiến giúp cá nhân hóa trải nghiệm học tập</p>
+            
+            <div class="auth-buttons" style="margin-top: 30px; justify-content: center;" id="heroButtons">
+                <!-- Sẽ được cập nhật bằng JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Game Section - ĐƯA LÊN TRÊN -->
+    <section class="game-section" id="games">
+        <div class="container">
+            <h2 class="section-title">Trò chơi giáo dục thông minh</h2>
+            <div class="game-cards">
+                <div class="game-card">
+                    <div class="game-content">
+                        <div class="game-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3 class="game-title">Video dự thi SV - HS khởi nghiệp</h3>
+                        <p class="game-description">Sản phẩm học sinh NTP tham gia SV - HS khởi nghiệp</p>
+                        <a href="https://www.youtube.com/watch?v=bg8pvPreBio" class="play-button" target="_blank">
+                            <i class="fas fa-play-circle"></i> Vào xem ngay
+                        </a>
+                    </div>
+                </div>
                 
-                <div class="auth-buttons" style="margin-top: 30px; justify-content: center;" id="heroButtons">
-                    <!-- Sẽ được cập nhật bằng JavaScript -->
+                <div class="game-card">
+                    <div class="game-content">
+                        <div class="game-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h3 class="game-title">Ôn tập kiến thức THCS</h3>
+                        <p class="game-description">Hệ thống kiến thức lớp 6,7,8,9 đầy đủ</p>
+                        <a href="https://ai.studio/apps/drive/13Wzv-zI3tC08XADQXQ1fptXKXOKWg0UJ" class="play-button" target="_blank">
+                            <i class="fas fa-play-circle"></i> Khám phá ngay
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="game-card">
+                    <div class="game-content">
+                        <div class="game-icon">
+                            <i class="fas fa-puzzle-piece"></i>
+                        </div>
+                        <h3 class="game-title">Chinh phục trí thức</h3>
+                        <p class="game-description">Rèn luyện tư duy logic qua các câu đố thông minh</p>
+                        <a href="https://ai.studio/apps/drive/1VrvZM3ytcM1UsPIthfDuJAzr8UJTxbRz?fullscreenApplet=true" class="play-button" target="_blank">
+                            <i class="fas fa-play-circle"></i> Thử thách ngay
+                        </a>
+                    </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Game Section (Đưa lên trước) -->
-        <section class="game-section" id="games">
-            <div class="container">
-                <h2 class="section-title">Trò chơi giáo dục thông minh</h2>
-                <div class="game-cards">
-                    <div class="game-card">
-                        <div class="game-content">
-                            <div class="game-icon">
-                                <i class="fas fa-robot"></i>
-                            </div>
-                            <h3 class="game-title">Video dự thi SV - HS khởi nghiệp</h3>
-                            <p class="game-description">Sản phẩm học sinh NTP tham gia SV - HS khởi nghiệp</p>
-                            <a href="https://www.youtube.com/watch?v=bg8pvPreBio" class="play-button" target="_blank">
-                                <i class="fas fa-play-circle"></i> Vào xem ngay
-                            </a>
-                        </div>
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Tính năng nổi bật</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
                     </div>
-                    
-                    <div class="game-card">
-                        <div class="game-content">
-                            <div class="game-icon">
-                                <i class="fas fa-lightbulb"></i>
-                            </div>
-                            <h3 class="game-title">Ôn tập kiến thức THCS</h3>
-                            <p class="game-description">Hệ thống kiến thức lớp 6,7,8,9 đầy đủ</p>
-                            <a href="https://ai.studio/apps/drive/13Wzv-zI3tC08XADQXQ1fptXKXOKWg0UJ" class="play-button" target="_blank">
-                                <i class="fas fa-play-circle"></i> Khám phá ngay
-                            </a>
-                        </div>
+                    <h3 class="feature-title">AI thông minh</h3>
+                    <p>Sử dụng Gemini AI tiên tiến để giải đáp mọi thắc mắc học tập, từ Toán, Văn, Anh đến Khoa học</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-upload"></i>
                     </div>
-                    
-                    <div class="game-card">
-                        <div class="game-content">
-                            <div class="game-icon">
-                                <i class="fas fa-puzzle-piece"></i>
-                            </div>
-                            <h3 class="game-title">Chinh phục trí thức</h3>
-                            <p class="game-description">Rèn luyện tư duy logic qua các câu đố thông minh</p>
-                            <a href="https://ai.studio/apps/drive/1VrvZM3ytcM1UsPIthfDuJAzr8UJTxbRz?fullscreenApplet=true" class="play-button" target="_blank">
-                                <i class="fas fa-play-circle"></i> Thử thách ngay
-                            </a>
-                        </div>
+                    <h3 class="feature-title">Đính kèm file</h3>
+                    <p>Gửi ảnh, PDF, Word để AI phân tích và giải đáp chi tiết, như một gia sư thực thụ</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-book"></i>
                     </div>
+                    <h3 class="feature-title">Kiến thức đa dạng</h3>
+                    <p>Hệ thống kiến thức từ lớp 6-9, luôn được cập nhật bởi đội ngũ giáo viên giàu kinh nghiệm</p>
                 </div>
             </div>
-        </section>
-
-        <!-- Features Section -->
-        <section class="features" id="features">
-            <div class="container">
-                <h2 class="section-title">Tính năng nổi bật</h2>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-brain"></i>
-                        </div>
-                        <h3 class="feature-title">AI thông minh</h3>
-                        <p>Sử dụng Gemini AI tiên tiến để giải đáp mọi thắc mắc học tập, từ Toán, Văn, Anh đến Khoa học</p>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-file-upload"></i>
-                        </div>
-                        <h3 class="feature-title">Đính kèm file</h3>
-                        <p>Gửi ảnh, PDF, Word để AI phân tích và giải đáp chi tiết, như một gia sư thực thụ</p>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-book"></i>
-                        </div>
-                        <h3 class="feature-title">Kiến thức đa dạng</h3>
-                        <p>Hệ thống kiến thức từ lớp 6-9, luôn được cập nhật bởi đội ngũ giáo viên giàu kinh nghiệm</p>
-                    </div>
-                </div>
+            
+            <!-- Comparison Table -->
+            <div class="comparison-section">
+                <h2 style="text-align: center; margin-bottom: 30px; color: #26a69a;">So sánh với các hệ thống khác</h2>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Tính năng</th>
+                            <th>Hệ thống của chúng tôi</th>
+                            <th>Hệ thống thông thường</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>AI hỗ trợ 24/7</td>
+                            <td class="check-mark">✓ Có</td>
+                            <td class="cross-mark">✗ Không</td>
+                        </tr>
+                        <tr>
+                            <td>Phân tích file đính kèm</td>
+                            <td class="check-mark">✓ Hỗ trợ đa dạng</td>
+                            <td class="cross-mark">✗ Hạn chế</td>
+                        </tr>
+                        <tr>
+                            <td>Kiến thức cá nhân hóa</td>
+                            <td class="check-mark">✓ Theo trình độ từng học sinh</td>
+                            <td class="cross-mark">✗ Chung cho tất cả</td>
+                        </tr>
+                        <tr>
+                            <td>Trò chơi giáo dục tích hợp</td>
+                            <td class="check-mark">✓ Đa dạng, hấp dẫn</td>
+                            <td class="cross-mark">✗ Ít hoặc không có</td>
+                        </tr>
+                        <tr>
+                            <td>Cập nhật kiến thức thường xuyên</td>
+                            <td class="check-mark">✓ Tự động bởi AI</td>
+                            <td class="cross-mark">✗ Thủ công</td>
+                        </tr>
+                        <tr>
+                            <td>Hỗ trợ đa môn học</td>
+                            <td class="check-mark">✓ 12 môn học THCS</td>
+                            <td class="cross-mark">✗ 3-5 môn chính</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-        </section>
-
-        <!-- Comparison Section -->
-        <section class="comparison-section">
-            <div class="container">
-                <h2 class="section-title">So sánh với hệ thống khác</h2>
-                <div class="comparison-table">
-                    <div class="comparison-header">
-                        <h3>Tại sao nên chọn hệ thống của chúng tôi?</h3>
-                        <p>Khác biệt tạo nên chất lượng</p>
-                    </div>
-                    <div class="comparison-content">
-                        <div class="comparison-row header">
-                            <div class="feature-col">Tính năng</div>
-                            <div class="system-col our-system">Hệ thống của chúng tôi</div>
-                            <div class="system-col other-system">Hệ thống khác</div>
-                        </div>
-                        <div class="comparison-row">
-                            <div class="feature-col">AI học tập chuyên biệt THCS</div>
-                            <div class="system-col our-system">✓ Có</div>
-                            <div class="system-col other-system">Thường không</div>
-                        </div>
-                        <div class="comparison-row">
-                            <div class="feature-col">Phân tích file đính kèm</div>
-                            <div class="system-col our-system">✓ Hỗ trợ đa dạng</div>
-                            <div class="system-col other-system">Hạn chế</div>
-                        </div>
-                        <div class="comparison-row">
-                            <div class="feature-col">Kiến thức cập nhật theo SGK</div>
-                            <div class="system-col our-system">✓ Luôn cập nhật</div>
-                            <div class="system-col other-system">Chậm cập nhật</div>
-                        </div>
-                        <div class="comparison-row">
-                            <div class="feature-col">Hỗ trợ đa môn học</div>
-                            <div class="system-col our-system">✓ 12 môn học</div>
-                            <div class="system-col other-system">Thường ít hơn</div>
-                        </div>
-                        <div class="comparison-row">
-                            <div class="feature-col">Miễn phí sử dụng</div>
-                            <div class="system-col our-system">✓ Hoàn toàn miễn phí</div>
-                            <div class="system-col other-system">Thường có phí</div>
-                        </div>
-                        <div class="comparison-row">
-                            <div class="feature-col">Hỗ trợ tiếng Việt</div>
-                            <div class="system-col our-system">✓ Tối ưu cho học sinh Việt</div>
-                            <div class="system-col other-system">Hạn chế</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="copyright">
                 @Copyright thuvienhoctap | Hệ thống học tập thông minh
+            </div>
+            <div class="admin-link" id="adminLink" style="display: none;">
+                <!-- Link quản trị chỉ hiện với admin -->
             </div>
         </div>
     </footer>
@@ -718,43 +699,43 @@
         // DOM Elements
         const userSection = document.getElementById('userSection');
         const heroButtons = document.getElementById('heroButtons');
+        const adminLink = document.getElementById('adminLink');
 
         // Check authentication state
         function checkAuthState() {
             auth.onAuthStateChanged(async (user) => {
                 if (user) {
-                    // User is signed in, check if admin
-                    const isAdmin = await checkIfAdmin(user.uid);
+                    // User is signed in
+                    const isAdmin = await checkIfAdmin(user.email);
                     renderUserInfo(user, isAdmin);
                 } else {
                     // No user is signed in
-                    renderLoginButtons(false);
+                    renderLoginButtons();
                 }
             });
         }
 
         // Check if user is admin
-        async function checkIfAdmin(userId) {
+        async function checkIfAdmin(email) {
+            if (!email) return false;
+            
             try {
-                const userDoc = await db.collection('users').doc(userId).get();
-                if (userDoc.exists) {
-                    return userDoc.data().role === 'admin';
-                }
-                return false;
+                const adminDoc = await db.collection('admins').doc(email).get();
+                return adminDoc.exists || email === 'hmtpum002@gmail.com';
             } catch (error) {
-                console.error('Lỗi khi kiểm tra admin:', error);
+                console.error('Lỗi kiểm tra quyền admin:', error);
                 return false;
             }
         }
 
         // Render user information
-        function renderUserInfo(user, isAdmin) {
+        function renderUserInfo(user, isAdmin = false) {
             const displayName = user.displayName || 'Người dùng';
             const email = user.email || '';
             const firstLetter = displayName.charAt(0).toUpperCase();
             
             // User info section
-            let userSectionHTML = `
+            userSection.innerHTML = `
                 <div class="user-info">
                     <div class="user-avatar">${firstLetter}</div>
                     <div class="user-details">
@@ -763,53 +744,65 @@
                     </div>
                 </div>
                 <div class="auth-buttons">
-                    <a href="chatbot.html" class="auth-btn chatbot-btn">
-                        <i class="fas fa-robot"></i> <span>Chatbot AI</span>
-                    </a>`;
-            
-            if (isAdmin) {
-                userSectionHTML += `
-                    <a href="admin.html" class="auth-btn admin-btn">
-                        <i class="fas fa-cog"></i> <span>Quản trị</span>
-                    </a>`;
-            }
-            
-            userSectionHTML += `
+                    <button onclick="goToChatbot()" class="auth-btn login-btn">
+                        <i class="fas fa-robot"></i> <span>Vào Chatbot</span>
+                    </button>
                     <button onclick="logout()" class="auth-btn logout-btn">
                         <i class="fas fa-sign-out-alt"></i> <span>Đăng xuất</span>
                     </button>
-                </div>`;
-            
-            userSection.innerHTML = userSectionHTML;
-            
-            // Hero section buttons
-            heroButtons.innerHTML = `
-                <a href="chatbot.html" class="auth-btn chatbot-btn" style="padding: 15px 30px; font-size: 1.1em;">
-                    <i class="fas fa-robot"></i> Vào Chatbot AI ngay
-                </a>
-            `;
-        }
-
-        // Render login buttons
-        function renderLoginButtons(isAdmin) {
-            // User info section
-            userSection.innerHTML = `
-                <div class="auth-buttons">
-                    <a href="auth.html" class="auth-btn login-btn">
-                        <i class="fas fa-sign-in-alt"></i> <span>Đăng nhập</span>
-                    </a>
                 </div>
             `;
             
             // Hero section buttons
             heroButtons.innerHTML = `
-                <a href="auth.html" class="auth-btn login-btn" style="padding: 15px 30px; font-size: 1.1em;">
-                    <i class="fas fa-user"></i> Đăng nhập để trải nghiệm đầy đủ
-                </a>
-                <a href="chatbot.html" class="auth-btn chatbot-btn" style="padding: 15px 30px; font-size: 1.1em; margin-left: 15px;">
-                    <i class="fas fa-robot"></i> Dùng thử ngay
-                </a>
+                <button onclick="goToChatbot()" class="auth-btn login-btn" style="padding: 15px 30px; font-size: 1.1em;">
+                    <i class="fas fa-robot"></i> Vào Chatbot AI ngay
+                </button>
             `;
+            
+            // Show admin link if user is admin
+            if (isAdmin) {
+                adminLink.style.display = 'block';
+                adminLink.innerHTML = `
+                    <a href="admin.html" target="_blank">
+                        <i class="fas fa-cog"></i> Trang quản trị
+                    </a>
+                `;
+            }
+        }
+
+        // Render login buttons
+        function renderLoginButtons() {
+            // User info section
+            userSection.innerHTML = `
+                <div class="auth-buttons">
+                    <button onclick="goToAuth()" class="auth-btn login-btn">
+                        <i class="fas fa-sign-in-alt"></i> <span>Đăng nhập</span>
+                    </button>
+                    <button onclick="goToChatbot()" class="auth-btn login-btn">
+                        <i class="fas fa-robot"></i> <span>Vào Chatbot</span>
+                    </button>
+                </div>
+            `;
+            
+            // Hero section buttons
+            heroButtons.innerHTML = `
+                <button onclick="goToAuth()" class="auth-btn login-btn" style="padding: 15px 30px; font-size: 1.1em;">
+                    <i class="fas fa-user"></i> Đăng nhập để trải nghiệm đầy đủ
+                </button>
+                <button onclick="goToChatbot()" class="auth-btn login-btn" style="padding: 15px 30px; font-size: 1.1em; margin-left: 15px;">
+                    <i class="fas fa-robot"></i> Dùng thử ngay
+                </button>
+            `;
+        }
+
+        // Navigation functions
+        function goToAuth() {
+            window.location.href = 'auth.html';
+        }
+
+        function goToChatbot() {
+            window.location.href = 'chatbot.html';
         }
 
         // Logout function
@@ -828,8 +821,10 @@
             checkAuthState();
         });
 
-        // Make logout function available globally
+        // Make functions available globally
         window.logout = logout;
+        window.goToAuth = goToAuth;
+        window.goToChatbot = goToChatbot;
     </script>
 </body>
 </html>
