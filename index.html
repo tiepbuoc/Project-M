@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
 
@@ -30,13 +31,15 @@
             padding: 0 20px;
         }
 
-        /* Header - ĐƠN GIẢN HÓA */
+        /* Header - CỐ ĐỊNH */
         .header {
-            background-color: rgba(255, 255, 255, 0.95);
+            background-color: rgba(255, 255, 255, 0.98);
             box-shadow: 0 2px 15px rgba(0,0,0,0.1);
             backdrop-filter: blur(10px);
-            position: sticky;
+            position: fixed;
             top: 0;
+            left: 0;
+            right: 0;
             z-index: 1000;
             padding: 15px 0;
         }
@@ -154,6 +157,7 @@
             background: #f8f9fa;
             color: #666;
             border: 1px solid #dee2e6;
+            padding: 10px;
         }
 
         .logout-btn:hover {
@@ -162,14 +166,30 @@
         }
 
         .chatbot-btn {
-            background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+            background: linear-gradient(45deg, #26a69a, #4CAF50);
             color: white;
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            box-shadow: 0 4px 15px rgba(38, 166, 154, 0.3);
         }
 
         .chatbot-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+            box-shadow: 0 6px 20px rgba(38, 166, 154, 0.4);
+        }
+
+        .admin-btn {
+            background: linear-gradient(45deg, #9C27B0, #673AB7);
+            color: white;
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(156, 39, 176, 0.4);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 90px;
         }
 
         /* Hero Section */
@@ -205,8 +225,8 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        /* Features Section */
-        .features {
+        /* Game Section (Đưa lên trước) */
+        .game-section {
             padding: 60px 0;
         }
 
@@ -228,46 +248,6 @@
             height: 4px;
             background: linear-gradient(90deg, #26a69a, #4CAF50);
             border-radius: 2px;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
-        }
-
-        .feature-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-            text-align: center;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-        }
-
-        .feature-icon {
-            font-size: 3em;
-            margin-bottom: 20px;
-            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .feature-title {
-            font-size: 1.4em;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        /* Game Section */
-        .game-section {
-            padding: 60px 0;
         }
 
         .game-cards {
@@ -327,41 +307,121 @@
             box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
         }
 
-        /* Footer */
-        .footer {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px 0;
-            margin-top: 60px;
-            border-top: 1px solid #eee;
+        /* Features Section (Sau Game Section) */
+        .features {
+            padding: 60px 0;
         }
 
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+
+        .feature-title {
+            font-size: 1.4em;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        /* Comparison Table */
+        .comparison-section {
+            padding: 60px 0;
+        }
+
+        .comparison-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 40px;
+        }
+
+        .comparison-header {
+            background: linear-gradient(45deg, #26a69a, #4CAF50);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .comparison-header h3 {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .comparison-content {
+            padding: 20px;
+        }
+
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .comparison-row.header {
+            font-weight: 600;
+            background: #f8f9fa;
+        }
+
+        .comparison-row:last-child {
+            border-bottom: none;
+        }
+
+        .feature-col {
+            padding: 0 15px;
+        }
+
+        .system-col {
+            text-align: center;
+            padding: 0 15px;
+        }
+
+        .our-system {
+            background: #e8f5e9;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+
+        .other-system {
+            color: #666;
+        }
+
+        /* Footer Đơn giản */
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px 0;
+            margin-top: 60px;
+            border-top: 1px solid #eee;
+            text-align: center;
         }
 
         .copyright {
             color: #666;
             font-weight: 500;
-        }
-
-        .admin-link {
             font-size: 0.9em;
-        }
-
-        .admin-link a {
-            color: #26a69a;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .admin-link a:hover {
-            text-decoration: underline;
         }
 
         /* Mobile Menu */
@@ -409,9 +469,14 @@
                 grid-template-columns: 1fr;
             }
             
-            .footer-content {
-                flex-direction: column;
+            .comparison-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
                 text-align: center;
+            }
+            
+            .comparison-row.header {
+                display: none;
             }
             
             .user-details {
@@ -419,6 +484,10 @@
             }
             
             .web-name {
+                display: none;
+            }
+            
+            .logout-btn span {
                 display: none;
             }
         }
@@ -446,11 +515,15 @@
             .hero {
                 padding: 40px 20px;
             }
+            
+            .main-content {
+                margin-top: 120px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Header ĐƠN GIẢN -->
+    <!-- Header Cố định -->
     <header class="header">
         <div class="container">
             <div class="nav-container">
@@ -471,117 +544,156 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo trường" class="hero-logo">
-            <h1>Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập</h1>
-            <p>Hệ thống học tập thông minh đầu tiên dành riêng cho học sinh THCS, tích hợp AI tiên tiến giúp cá nhân hóa trải nghiệm học tập</p>
-            
-            <div class="auth-buttons" style="margin-top: 30px; justify-content: center;" id="heroButtons">
-                <!-- Sẽ được cập nhật bằng JavaScript -->
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo trường" class="hero-logo">
+                <h1>Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập</h1>
+                <p>Hệ thống học tập thông minh đầu tiên dành riêng cho học sinh THCS, tích hợp AI tiên tiến giúp cá nhân hóa trải nghiệm học tập</p>
+                
+                <div class="auth-buttons" style="margin-top: 30px; justify-content: center;" id="heroButtons">
+                    <!-- Sẽ được cập nhật bằng JavaScript -->
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <div class="container">
-            <h2 class="section-title">Tính năng nổi bật</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-brain"></i>
+        <!-- Game Section (Đưa lên trước) -->
+        <section class="game-section" id="games">
+            <div class="container">
+                <h2 class="section-title">Trò chơi giáo dục thông minh</h2>
+                <div class="game-cards">
+                    <div class="game-card">
+                        <div class="game-content">
+                            <div class="game-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h3 class="game-title">Video dự thi SV - HS khởi nghiệp</h3>
+                            <p class="game-description">Sản phẩm học sinh NTP tham gia SV - HS khởi nghiệp</p>
+                            <a href="https://www.youtube.com/watch?v=bg8pvPreBio" class="play-button" target="_blank">
+                                <i class="fas fa-play-circle"></i> Vào xem ngay
+                            </a>
+                        </div>
                     </div>
-                    <h3 class="feature-title">AI thông minh</h3>
-                    <p>Sử dụng Gemini AI tiên tiến để giải đáp mọi thắc mắc học tập, từ Toán, Văn, Anh đến Khoa học</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-file-upload"></i>
+                    
+                    <div class="game-card">
+                        <div class="game-content">
+                            <div class="game-icon">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <h3 class="game-title">Ôn tập kiến thức THCS</h3>
+                            <p class="game-description">Hệ thống kiến thức lớp 6,7,8,9 đầy đủ</p>
+                            <a href="https://ai.studio/apps/drive/13Wzv-zI3tC08XADQXQ1fptXKXOKWg0UJ" class="play-button" target="_blank">
+                                <i class="fas fa-play-circle"></i> Khám phá ngay
+                            </a>
+                        </div>
                     </div>
-                    <h3 class="feature-title">Đính kèm file</h3>
-                    <p>Gửi ảnh, PDF, Word để AI phân tích và giải đáp chi tiết, như một gia sư thực thụ</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-book"></i>
+                    
+                    <div class="game-card">
+                        <div class="game-content">
+                            <div class="game-icon">
+                                <i class="fas fa-puzzle-piece"></i>
+                            </div>
+                            <h3 class="game-title">Chinh phục trí thức</h3>
+                            <p class="game-description">Rèn luyện tư duy logic qua các câu đố thông minh</p>
+                            <a href="https://ai.studio/apps/drive/1VrvZM3ytcM1UsPIthfDuJAzr8UJTxbRz?fullscreenApplet=true" class="play-button" target="_blank">
+                                <i class="fas fa-play-circle"></i> Thử thách ngay
+                            </a>
+                        </div>
                     </div>
-                    <h3 class="feature-title">Kiến thức đa dạng</h3>
-                    <p>Hệ thống kiến thức từ lớp 6-9, luôn được cập nhật bởi đội ngũ giáo viên giàu kinh nghiệm</p>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Game Section -->
-    <section class="game-section" id="games">
-        <div class="container">
-            <h2 class="section-title">Trò chơi giáo dục thông minh</h2>
-            <div class="game-cards">
-                <div class="game-card">
-                    <div class="game-content">
-                        <div class="game-icon">
-                            <i class="fas fa-robot"></i>
+        <!-- Features Section -->
+        <section class="features" id="features">
+            <div class="container">
+                <h2 class="section-title">Tính năng nổi bật</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
                         </div>
-                        <h3 class="game-title">Video dự thi SV - HS khởi nghiệp</h3>
-                        <p class="game-description">Sản phẩm học sinh NTP tham gia SV - HS khởi nghiệp</p>
-                        <a href="https://www.youtube.com/watch?v=bg8pvPreBio" class="play-button" target="_blank">
-                            <i class="fas fa-play-circle"></i> Vào xem ngay
-                        </a>
+                        <h3 class="feature-title">AI thông minh</h3>
+                        <p>Sử dụng Gemini AI tiên tiến để giải đáp mọi thắc mắc học tập, từ Toán, Văn, Anh đến Khoa học</p>
                     </div>
-                </div>
-                
-                <div class="game-card">
-                    <div class="game-content">
-                        <div class="game-icon">
-                            <i class="fas fa-lightbulb"></i>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-file-upload"></i>
                         </div>
-                        <h3 class="game-title">Ôn tập kiến thức THCS</h3>
-                        <p class="game-description">Hệ thống kiến thức lớp 6,7,8,9 đầy đủ</p>
-                        <a href="https://ai.studio/apps/drive/13Wzv-zI3tC08XADQXQ1fptXKXOKWg0UJ" class="play-button" target="_blank">
-                            <i class="fas fa-play-circle"></i> Khám phá ngay
-                        </a>
+                        <h3 class="feature-title">Đính kèm file</h3>
+                        <p>Gửi ảnh, PDF, Word để AI phân tích và giải đáp chi tiết, như một gia sư thực thụ</p>
                     </div>
-                </div>
-                
-                <div class="game-card">
-                    <div class="game-content">
-                        <div class="game-icon">
-                            <i class="fas fa-puzzle-piece"></i>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-book"></i>
                         </div>
-                        <h3 class="game-title">Chinh phục trí thức</h3>
-                        <p class="game-description">Rèn luyện tư duy logic qua các câu đố thông minh</p>
-                        <a href="https://ai.studio/apps/drive/1VrvZM3ytcM1UsPIthfDuJAzr8UJTxbRz?fullscreenApplet=true" class="play-button" target="_blank">
-                            <i class="fas fa-play-circle"></i> Thử thách ngay
-                        </a>
+                        <h3 class="feature-title">Kiến thức đa dạng</h3>
+                        <p>Hệ thống kiến thức từ lớp 6-9, luôn được cập nhật bởi đội ngũ giáo viên giàu kinh nghiệm</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <!-- Comparison Section -->
+        <section class="comparison-section">
+            <div class="container">
+                <h2 class="section-title">So sánh với hệ thống khác</h2>
+                <div class="comparison-table">
+                    <div class="comparison-header">
+                        <h3>Tại sao nên chọn hệ thống của chúng tôi?</h3>
+                        <p>Khác biệt tạo nên chất lượng</p>
+                    </div>
+                    <div class="comparison-content">
+                        <div class="comparison-row header">
+                            <div class="feature-col">Tính năng</div>
+                            <div class="system-col our-system">Hệ thống của chúng tôi</div>
+                            <div class="system-col other-system">Hệ thống khác</div>
+                        </div>
+                        <div class="comparison-row">
+                            <div class="feature-col">AI học tập chuyên biệt THCS</div>
+                            <div class="system-col our-system">✓ Có</div>
+                            <div class="system-col other-system">Thường không</div>
+                        </div>
+                        <div class="comparison-row">
+                            <div class="feature-col">Phân tích file đính kèm</div>
+                            <div class="system-col our-system">✓ Hỗ trợ đa dạng</div>
+                            <div class="system-col other-system">Hạn chế</div>
+                        </div>
+                        <div class="comparison-row">
+                            <div class="feature-col">Kiến thức cập nhật theo SGK</div>
+                            <div class="system-col our-system">✓ Luôn cập nhật</div>
+                            <div class="system-col other-system">Chậm cập nhật</div>
+                        </div>
+                        <div class="comparison-row">
+                            <div class="feature-col">Hỗ trợ đa môn học</div>
+                            <div class="system-col our-system">✓ 12 môn học</div>
+                            <div class="system-col other-system">Thường ít hơn</div>
+                        </div>
+                        <div class="comparison-row">
+                            <div class="feature-col">Miễn phí sử dụng</div>
+                            <div class="system-col our-system">✓ Hoàn toàn miễn phí</div>
+                            <div class="system-col other-system">Thường có phí</div>
+                        </div>
+                        <div class="comparison-row">
+                            <div class="feature-col">Hỗ trợ tiếng Việt</div>
+                            <div class="system-col our-system">✓ Tối ưu cho học sinh Việt</div>
+                            <div class="system-col other-system">Hạn chế</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <div class="footer-content">
-                <div class="logo-container">
-                    <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo" class="logo">
-                    <div>
-                        <div class="school-name">THCS Nguyễn Tri Phương</div>
-                        <div class="web-name">Hệ thống học tập AI</div>
-                    </div>
-                </div>
-                <div class="copyright">
-                    @Copyright thuvienhoctap | Hệ thống học tập thông minh
-                </div>
-                <div class="admin-link">
-                    <a href="admin.html" target="_blank">
-                        <i class="fas fa-cog"></i> Quản trị viên
-                    </a>
-                </div>
+            <div class="copyright">
+                @Copyright thuvienhoctap | Hệ thống học tập thông minh
             </div>
         </div>
     </footer>
@@ -601,6 +713,7 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const db = firebase.firestore();
 
         // DOM Elements
         const userSection = document.getElementById('userSection');
@@ -608,25 +721,40 @@
 
         // Check authentication state
         function checkAuthState() {
-            auth.onAuthStateChanged((user) => {
+            auth.onAuthStateChanged(async (user) => {
                 if (user) {
-                    // User is signed in
-                    renderUserInfo(user);
+                    // User is signed in, check if admin
+                    const isAdmin = await checkIfAdmin(user.uid);
+                    renderUserInfo(user, isAdmin);
                 } else {
                     // No user is signed in
-                    renderLoginButtons();
+                    renderLoginButtons(false);
                 }
             });
         }
 
+        // Check if user is admin
+        async function checkIfAdmin(userId) {
+            try {
+                const userDoc = await db.collection('users').doc(userId).get();
+                if (userDoc.exists) {
+                    return userDoc.data().role === 'admin';
+                }
+                return false;
+            } catch (error) {
+                console.error('Lỗi khi kiểm tra admin:', error);
+                return false;
+            }
+        }
+
         // Render user information
-        function renderUserInfo(user) {
+        function renderUserInfo(user, isAdmin) {
             const displayName = user.displayName || 'Người dùng';
             const email = user.email || '';
             const firstLetter = displayName.charAt(0).toUpperCase();
             
             // User info section
-            userSection.innerHTML = `
+            let userSectionHTML = `
                 <div class="user-info">
                     <div class="user-avatar">${firstLetter}</div>
                     <div class="user-details">
@@ -636,13 +764,23 @@
                 </div>
                 <div class="auth-buttons">
                     <a href="chatbot.html" class="auth-btn chatbot-btn">
-                        <i class="fas fa-robot"></i> Vào Chatbot
-                    </a>
+                        <i class="fas fa-robot"></i> <span>Chatbot AI</span>
+                    </a>`;
+            
+            if (isAdmin) {
+                userSectionHTML += `
+                    <a href="admin.html" class="auth-btn admin-btn">
+                        <i class="fas fa-cog"></i> <span>Quản trị</span>
+                    </a>`;
+            }
+            
+            userSectionHTML += `
                     <button onclick="logout()" class="auth-btn logout-btn">
-                        <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                        <i class="fas fa-sign-out-alt"></i> <span>Đăng xuất</span>
                     </button>
-                </div>
-            `;
+                </div>`;
+            
+            userSection.innerHTML = userSectionHTML;
             
             // Hero section buttons
             heroButtons.innerHTML = `
@@ -653,15 +791,12 @@
         }
 
         // Render login buttons
-        function renderLoginButtons() {
-            // User info section - chỉ hiển thị nút đăng nhập
+        function renderLoginButtons(isAdmin) {
+            // User info section
             userSection.innerHTML = `
                 <div class="auth-buttons">
                     <a href="auth.html" class="auth-btn login-btn">
-                        <i class="fas fa-sign-in-alt"></i> Đăng nhập
-                    </a>
-                    <a href="chatbot.html" class="auth-btn chatbot-btn">
-                        <i class="fas fa-robot"></i> Vào Chatbot
+                        <i class="fas fa-sign-in-alt"></i> <span>Đăng nhập</span>
                     </a>
                 </div>
             `;
