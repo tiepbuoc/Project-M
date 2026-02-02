@@ -4,18 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatbot AI học tập - THCS Nguyễn Tri Phương</title>
+    
+    <!-- Font & Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- KaTeX for math rendering -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script type="importmap">
-        {
-            "imports": {
-                "@google/generative-ai": "https://esm.run/@google/generative-ai"
-            }
-        }
-    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
+    <!-- Markdown parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
 
@@ -45,7 +51,7 @@
             padding: 0;
         }
 
-        /* Header - GIỐNG HỆT INDEX */
+        /* Header */
         .header {
             background-color: rgba(255, 255, 255, 0.95);
             box-shadow: 0 2px 15px rgba(0,0,0,0.1);
@@ -92,7 +98,7 @@
             margin-left: 10px;
         }
 
-        /* User Info Section - GIỐNG INDEX */
+        /* User Info Section */
         .user-section {
             display: flex;
             align-items: center;
@@ -307,6 +313,7 @@
             position: relative;
             word-wrap: break-word;
             line-height: 1.6;
+            overflow-x: auto;
         }
 
         .user-message .message-content {
@@ -322,7 +329,22 @@
             overflow-wrap: break-word;
         }
 
-        /* Markdown Styling - FIXED hoàn toàn */
+        /* Markdown Styling - CẢI THIỆN */
+        .message-content h1,
+        .message-content h2,
+        .message-content h3,
+        .message-content h4 {
+            margin: 16px 0 10px 0;
+            color: #2c3e50;
+            font-weight: 600;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .message-content h1 { font-size: 1.4em; }
+        .message-content h2 { font-size: 1.3em; }
+        .message-content h3 { font-size: 1.2em; }
+        .message-content h4 { font-size: 1.1em; }
+
         .message-content strong {
             font-weight: 700;
         }
@@ -356,18 +378,6 @@
             color: inherit;
             font-size: inherit;
         }
-
-        .message-content h1,
-        .message-content h2,
-        .message-content h3 {
-            margin: 16px 0 10px 0;
-            color: #2c3e50;
-            font-weight: 600;
-        }
-
-        .message-content h1 { font-size: 1.4em; }
-        .message-content h2 { font-size: 1.3em; }
-        .message-content h3 { font-size: 1.2em; }
 
         .message-content ul,
         .message-content ol {
@@ -411,19 +421,14 @@
             font-weight: 600;
         }
 
-        /* LaTeX Styling - FIXED */
-        .message-content .math-inline {
-            font-family: "KaTeX_Main", "Times New Roman", serif;
-            font-size: 1.05em;
+        /* KaTeX Styling - ĐỒNG BỘ VỚI FONT CHÍNH */
+        .message-content .katex,
+        .message-content .katex-display {
+            font-family: 'Quicksand', sans-serif !important;
         }
 
-        .message-content .math-display {
-            font-family: "KaTeX_Main", "Times New Roman", serif;
-            font-size: 1.1em;
-            text-align: center;
-            margin: 12px 0;
-            overflow-x: auto;
-            overflow-y: hidden;
+        .katex {
+            font-family: 'Quicksand', sans-serif !important;
         }
 
         .message-time {
@@ -540,6 +545,7 @@
             border-radius: 25px;
             font-size: 1em;
             transition: all 0.3s;
+            font-family: 'Quicksand', sans-serif;
         }
 
         .message-input:focus {
@@ -745,12 +751,12 @@
     </style>
 </head>
 <body>
-    <!-- Header GIỐNG HỆT INDEX -->
+    <!-- Header -->
     <header class="header">
         <div class="nav-container">
             <!-- Logo và tên web -->
             <div class="logo-container" onclick="goToIndex()">
-                <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo trường THCS Nguyễn Tri Phương" class="logo">
+                <img src="https://via.placeholder.com/50x50?text=Logo" alt="Logo trường THCS Nguyễn Tri Phương" class="logo">
                 <div>
                     <div class="school-name">THCS Nguyễn Tri Phương</div>
                     <div class="web-name">Hệ thống học tập AI</div>
@@ -759,7 +765,17 @@
             
             <!-- Thông tin người dùng -->
             <div class="user-section" id="userSection">
-                <!-- Sẽ được cập nhật bằng JavaScript -->
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">N</div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Người dùng</div>
+                        <div class="user-email" id="userEmail">hmtpum002@gmail.com</div>
+                    </div>
+                </div>
+                <button onclick="logout()" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Đăng xuất</span>
+                </button>
             </div>
         </div>
     </header>
@@ -846,6 +862,10 @@
             
             <div class="messages-container" id="messagesContainer">
                 <!-- Messages will be loaded here -->
+                <div class="message bot-message">
+                    <div class="message-content">Chào em! Thầy/cô là trợ lý AI học tập của trường THCS Nguyễn Tri Phương.<br>Em có thể hỏi bất cứ điều gì về môn <strong>Toán Đại Số</strong>,<br>gửi file bài tập, hoặc yêu cầu giải thích chi tiết.</div>
+                    <div class="message-time" id="welcomeTime"></div>
+                </div>
             </div>
             
             <!-- Attachment Preview -->
@@ -858,8 +878,7 @@
                     <i class="fas fa-paperclip"></i>
                 </button>
                 
-                <input type="text" class="message-input" id="messageInput" 
-                       placeholder="Hỏi thầy/cô điều gì đó..." autocomplete="off">
+                <input type="text" class="message-input" id="messageInput" placeholder="Hỏi thầy/cô điều gì đó..." autocomplete="off">
                 
                 <button class="send-button" id="sendButton" onclick="sendMessage()">
                     <i class="fas fa-paper-plane"></i>
@@ -868,7 +887,17 @@
         </div>
     </div>
 
+    <!-- Import Google Generative AI -->
+    <script type="importmap">
+        {
+            "imports": {
+                "@google/generative-ai": "https://esm.run/@google/generative-ai"
+            }
+        }
+    </script>
+
     <script type="module">
+        // Initialize modules
         import { GoogleGenerativeAI } from "@google/generative-ai";
 
         // Firebase configuration
@@ -876,16 +905,41 @@
             apiKey: "AIzaSyA7eSuNHa_QXFgC-KsCeCLY5MdL90_FZsQ",
             authDomain: "thuvienhoctap-b24ae.firebaseapp.com",
             projectId: "thuvienhoctap-b24ae",
-            storageBucket: "thuvienhoctap-b24ae.firebasestorage.app",
+            storageBucket: "thuvienhoctap-b24ae.appspot.com",
             messagingSenderId: "25688122219",
-            appId: "1:25688122219:web:6ff91267b41968a23e622e",
-            measurementId: "G-VWV9848EGD"
+            appId: "1:25688122219:web:6ff91267b41968a23e622e"
         };
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        // Initialize Firebase (chỉ khi cần)
+        let firestoreInitialized = false;
+        let auth, db;
+        
+        try {
+            // Khởi tạo Firebase app
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            
+            // Chỉ khởi tạo auth và firestore khi cần
+            auth = firebase.auth();
+            db = firebase.firestore();
+            firestoreInitialized = true;
+            
+            // Tối ưu cài đặt Firestore để giảm kết nối
+            db.settings({
+                cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
+            });
+            
+            // Bật persistence
+            db.enablePersistence()
+                .catch((err) => {
+                    console.warn('Không thể bật persistence:', err.code);
+                });
+                
+        } catch (error) {
+            console.warn('Không thể khởi tạo Firebase, chế độ offline:', error);
+            firestoreInitialized = false;
+        }
 
         // Initialize Gemini AI
         const GEMINI_API_KEY = "I2KvIpFfUmO_NoGghLU9ZXp-_sDB4xftCySazIA".split("").reverse().join("");
@@ -902,6 +956,7 @@
                     maxOutputTokens: 2048,
                 }
             });
+            console.log('✅ Gemini AI đã được khởi tạo');
         } catch (error) {
             console.error("Lỗi khởi tạo Gemini:", error);
             model = null;
@@ -911,6 +966,7 @@
         const userSection = document.getElementById('userSection');
         const userAvatar = document.getElementById('userAvatar');
         const userName = document.getElementById('userName');
+        const userEmail = document.getElementById('userEmail');
         const subjectInfo = document.getElementById('subjectInfo');
         const messagesContainer = document.getElementById('messagesContainer');
         const messageInput = document.getElementById('messageInput');
@@ -922,6 +978,16 @@
         const sidebarToggle = document.getElementById('sidebarToggle');
         const sidebarToggleIcon = document.getElementById('sidebarToggleIcon');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const welcomeTime = document.getElementById('welcomeTime');
+
+        // Set welcome message time
+        if (welcomeTime) {
+            const now = new Date();
+            welcomeTime.textContent = now.toLocaleTimeString('vi-VN', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+        }
 
         // App State
         let currentUser = null;
@@ -931,13 +997,14 @@
         let homeworkData = {};
         let chatHistory = [];
         let isProcessing = false;
+        let firestoreListeners = [];
 
         // Subject definitions
         const subjects = {
             'toan-dai': { 
                 name: 'Toán Đại Số', 
                 icon: 'calculator',
-                systemPrompt: "Bạn là giáo viên Toán Đại Số THCS. Hướng dẫn chi tiết, giải thích từng bước. Luôn kiểm tra kết quả. Sử dụng LaTeX cho công thức toán: $công_thức$ cho inline và $$công_thức$$ cho display."
+                systemPrompt: "Bạn là giáo viên Toán Đại Số THCS. Hướng dẫn chi tiết, giải thích từng bước. Sử dụng LaTeX cho công thức toán: $công_thức$ cho inline và $$công_thức$$ cho display. Không tự bọc span."
             },
             'toan-hinh': { 
                 name: 'Toán Hình Học', 
@@ -952,7 +1019,7 @@
             'khtn': { 
                 name: 'Khoa Học Tự Nhiên', 
                 icon: 'atom',
-                systemPrompt: "Bạn là giáo viên KHTN THCS. Giải thích hiện tượng khoa học. Sử dụng tên tiếng Anh cho nguyên tố hóa học. Sử dụng LaTeX cho công thức hóa học."
+                systemPrompt: "Bạn là giáo viên KHTN THCS. Giải thích hiện tượng khoa học. Sử dụng LaTeX cho công thức hóa học, vật lý."
             },
             'lich-su-dia-ly': { 
                 name: 'Lịch Sử & Địa Lý', 
@@ -982,14 +1049,21 @@
             'hdtn-hn': { 
                 name: 'Hoạt Động Trải Nghiệm - Hướng Nghiệp', 
                 icon: 'hands-helping',
-                systemPrompt: "Bạn là giáo viên HĐTN-HN THCS. Hướng dẫn kỹ năng sống, định hướng nghề nghiệp. Tổ chức hoạt động trải nghiệm."
+                systemPrompt: "Bạn là giáo viên HĐTN-HN THCS. Hướng dẫn kỹ năng sống, định hướng nghề nghiệp."
             },
             'stem': { 
                 name: 'STEM', 
                 icon: 'cogs',
-                systemPrompt: "Bạn là giáo viên STEM THCS. Tích hợp Khoa học, Công nghệ, Kỹ thuật và Toán học. Hướng dẫn dự án thực hành. Sử dụng LaTeX cho công thức."
+                systemPrompt: "Bạn là giáo viên STEM THCS. Tích hợp Khoa học, Công nghệ, Kỹ thuật và Toán học. Sử dụng LaTeX cho công thức."
             }
         };
+
+        // Configure marked for markdown parsing
+        marked.setOptions({
+            breaks: true,
+            gfm: true,
+            headerIds: false
+        });
 
         // Initialize user
         function initializeUser() {
@@ -1001,6 +1075,10 @@
                 const displayName = userData.displayName || 'Người dùng';
                 const email = userData.email || '';
                 const firstLetter = displayName.charAt(0).toUpperCase();
+                
+                userAvatar.textContent = firstLetter;
+                userName.textContent = displayName;
+                userEmail.textContent = email;
                 
                 userSection.innerHTML = `
                     <div class="user-info">
@@ -1043,7 +1121,7 @@
             }
         }
 
-        // Save chat history (using sessionStorage)
+        // Save chat history
         function saveChatHistory() {
             try {
                 sessionStorage.setItem(`chatHistory_${currentUser.uid}_${currentSubject}`, JSON.stringify(chatHistory));
@@ -1055,58 +1133,105 @@
         // Display chat history
         function displayChatHistory() {
             messagesContainer.innerHTML = '';
+            
+            // Add welcome message
+            const now = new Date();
+            const welcomeDiv = document.createElement('div');
+            welcomeDiv.className = 'message bot-message';
+            welcomeDiv.innerHTML = `
+                <div class="message-content">Chào em! Thầy/cô là trợ lý AI học tập của trường THCS Nguyễn Tri Phương.<br>Em có thể hỏi bất cứ điều gì về môn <strong>${subjects[currentSubject].name}</strong>,<br>gửi file bài tập, hoặc yêu cầu giải thích chi tiết.</div>
+                <div class="message-time">${now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</div>
+            `;
+            messagesContainer.appendChild(welcomeDiv);
+            
+            // Add chat history
             chatHistory.forEach(item => {
                 addMessageToDisplay(item.role, item.text, item.files || []);
             });
+            
+            // Render LaTeX trong toàn bộ messages container
+            setTimeout(() => {
+                renderMathInElement(messagesContainer, {
+                    delimiters: [
+                        { left: "$$", right: "$$", display: true },
+                        { left: "$", right: "$", display: false }
+                    ],
+                    throwOnError: false,
+                    output: 'html'
+                });
+            }, 100);
         }
 
-        // Load subject knowledge from Firestore
+        // Load subject knowledge from Firestore (chỉ khi cần)
         async function loadSubjectKnowledge() {
+            if (!firestoreInitialized) return;
+            
             try {
-                const snapshot = await db.collection('subject_knowledge').get();
+                const snapshot = await db.collection('subject_knowledge')
+                    .where('subject', '==', currentSubject)
+                    .limit(1)
+                    .get();
+                
                 subjectKnowledge = {};
                 
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    subjectKnowledge[data.subject] = data.knowledge || '';
+                    subjectKnowledge[currentSubject] = data.knowledge || '';
                 });
                 
-                console.log('✅ Đã tải kiến thức cho các môn học');
+                console.log(`✅ Đã tải kiến thức cho môn ${currentSubject}`);
             } catch (error) {
-                console.error('❌ Lỗi khi tải kiến thức:', error);
+                console.warn('⚠ Không thể tải kiến thức từ Firestore:', error);
                 subjectKnowledge = {};
             }
         }
 
-        // Load homework data from Firestore
+        // Load homework data from Firestore (chỉ khi cần)
         async function loadHomeworkData() {
+            if (!firestoreInitialized) return;
+            
             try {
-                const snapshot = await db.collection('homework').get();
+                const snapshot = await db.collection('homework')
+                    .where('subject', '==', currentSubject)
+                    .limit(5)
+                    .get();
+                
                 homeworkData = {};
+                homeworkData[currentSubject] = [];
                 
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    if (!homeworkData[data.subject]) {
-                        homeworkData[data.subject] = [];
-                    }
-                    homeworkData[data.subject].push({
+                    homeworkData[currentSubject].push({
                         question: data.question,
                         answer: data.answer,
                         difficulty: data.difficulty || 'medium'
                     });
                 });
                 
-                console.log('✅ Đã tải bài tập cho các môn học');
+                console.log(`✅ Đã tải bài tập cho môn ${currentSubject}`);
             } catch (error) {
-                console.error('❌ Lỗi khi tải bài tập:', error);
+                console.warn('⚠ Không thể tải bài tập từ Firestore:', error);
                 homeworkData = {};
             }
+        }
+
+        // Clean up Firestore listeners
+        function cleanupFirestoreListeners() {
+            firestoreListeners.forEach(unsubscribe => {
+                if (unsubscribe && typeof unsubscribe === 'function') {
+                    unsubscribe();
+                }
+            });
+            firestoreListeners = [];
         }
 
         // Select subject
         function selectSubject(subject) {
             // Save current chat history
             saveChatHistory();
+            
+            // Clean up listeners
+            cleanupFirestoreListeners();
             
             // Update active button
             subjectButtons.forEach(btn => {
@@ -1121,7 +1246,7 @@
             subjectInfo.innerHTML = `Chào em! Thầy/cô sẵn sàng hỗ trợ em học môn <strong>${subjectName}</strong>. 
                                    Em có thể hỏi bài, gửi file hoặc yêu cầu bài tập.`;
             
-            // Load chat history for new subject from sessionStorage
+            // Load chat history for new subject
             const savedHistory = sessionStorage.getItem(`chatHistory_${currentUser.uid}_${currentSubject}`);
             if (savedHistory) {
                 try {
@@ -1133,18 +1258,12 @@
                 chatHistory = [];
             }
             
-            // Clear and display new chat history
-            messagesContainer.innerHTML = '';
-            if (chatHistory.length === 0) {
-                // Add welcome message for new subject
-                const welcomeMessage = `Thầy/cô chuyển sang hỗ trợ em học môn **${subjectName}**. 
-                                      ${subjects[subject]?.icon ? `<i class="fas fa-${subjects[subject].icon}"></i> ` : ''}
-                                      Em có câu hỏi nào không?`;
-                
-                addMessage('bot', welcomeMessage);
-            } else {
-                displayChatHistory();
-            }
+            // Load data for new subject
+            loadSubjectKnowledge();
+            loadHomeworkData();
+            
+            // Display chat history
+            displayChatHistory();
             
             // Close sidebar on mobile
             if (window.innerWidth <= 768) {
@@ -1152,74 +1271,17 @@
             }
         }
 
-        // Process text for markdown và LaTeX - FIXED HOÀN TOÀN
+        // Process markdown và render LaTeX đúng cách
         function processMarkdown(text) {
             if (!text) return '';
             
-            // Escape HTML trước
-            let processedText = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            // Parse markdown
+            let html = marked.parse(text);
             
-            // Xử lý code blocks (```code```)
-            processedText = processedText.replace(/```([\s\S]*?)```/g, function(match, code) {
-                return `<pre><code>${code.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
-            });
-            
-            // Xử lý inline code (`code`)
-            processedText = processedText.replace(/`([^`]+)`/g, '<code>$1</code>');
-            
-            // Xử lý bold (**text**)
-            processedText = processedText.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-            processedText = processedText.replace(/__([^_]+)__/g, '<strong>$1</strong>');
-            
-            // Xử lý italic (*text*)
-            processedText = processedText.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-            processedText = processedText.replace(/_([^_]+)_/g, '<em>$1</em>');
-            
-            // Xử lý headers (# Header)
-            processedText = processedText.replace(/^### (.*$)/gm, '<h3>$1</h3>');
-            processedText = processedText.replace(/^## (.*$)/gm, '<h2>$1</h2>');
-            processedText = processedText.replace(/^# (.*$)/gm, '<h1>$1</h1>');
-            
-            // Xử lý unordered lists (- item)
-            processedText = processedText.replace(/^\s*[-*+] (.*$)/gm, '<li>$1</li>');
-            
-            // Xử lý ordered lists (1. item)
-            processedText = processedText.replace(/^\s*\d+\. (.*$)/gm, '<li>$1</li>');
-            
-            // Wrap lists
-            processedText = processedText.replace(/(<li>.*<\/li>\n?)+/g, function(match) {
-                if (match.includes('1.')) {
-                    return '<ol>' + match + '</ol>';
-                } else {
-                    return '<ul>' + match + '</ul>';
-                }
-            });
-            
-            // Xử lý blockquotes (> text)
-            processedText = processedText.replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>');
-            
-            // Xử lý horizontal rules (---)
-            processedText = processedText.replace(/^---$/gm, '<hr>');
-            processedText = processedText.replace(/^\*\*\*$/gm, '<hr>');
-            processedText = processedText.replace(/^___$/gm, '<hr>');
-            
-            // Xử lý LaTeX inline math ($...$)
-            processedText = processedText.replace(/\$([^$]+)\$/g, function(match, math) {
-                return `<span class="math-inline">${math}</span>`;
-            });
-            
-            // Xử lý LaTeX display math ($$...$$)
-            processedText = processedText.replace(/\$\$([^$]+)\$\$/g, function(match, math) {
-                return `<div class="math-display">${math}</div>`;
-            });
-            
-            // Xử lý line breaks
-            processedText = processedText.replace(/\n/g, '<br>');
-            
-            return processedText;
+            return html;
         }
 
-        // Add message to display với markdown đã xử lý
+        // Add message to display với markdown và LaTeX
         function addMessageToDisplay(sender, text, files = []) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}-message`;
@@ -1255,7 +1317,7 @@
                 fileHtml += '</div>';
             }
             
-            // Process text for markdown và LaTeX
+            // Process markdown cho bot messages
             let htmlContent = '';
             if (sender === 'bot') {
                 htmlContent = processMarkdown(text);
@@ -1269,6 +1331,21 @@
             `;
             
             messagesContainer.appendChild(messageDiv);
+            
+            // Render LaTeX trong message mới
+            if (sender === 'bot') {
+                setTimeout(() => {
+                    renderMathInElement(messageDiv, {
+                        delimiters: [
+                            { left: "$$", right: "$$", display: true },
+                            { left: "$", right: "$", display: false }
+                        ],
+                        throwOnError: false,
+                        output: 'html'
+                    });
+                }, 50);
+            }
+            
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
@@ -1280,7 +1357,8 @@
             chatHistory.push({
                 role: sender,
                 text: text,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                files: files.map(f => ({ name: f.name, type: f.type, url: f.url }))
             });
             
             // Giới hạn lịch sử chat
@@ -1317,22 +1395,29 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: rgba(0,0,0,0.8);
+                background: rgba(0,0,0,0.9);
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 z-index: 10000;
+                cursor: pointer;
             `;
             
             modal.innerHTML = `
-                <div style="position: relative;">
-                    <img src="${url}" style="max-width: 90vw; max-height: 90vh; border-radius: 10px;">
+                <div style="position: relative; max-width: 95vw; max-height: 95vh;">
+                    <img src="${url}" style="max-width: 100%; max-height: 100%; border-radius: 10px; display: block;">
                     <button onclick="this.parentElement.parentElement.remove()" 
-                            style="position: absolute; top: -40px; right: 0; background: #f44336; color: white; border: none; padding: 10px; border-radius: 50%; cursor: pointer;">
+                            style="position: absolute; top: -40px; right: 0; background: #f44336; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1.2em; display: flex; align-items: center; justify-content: center;">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
             `;
+            
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
             
             document.body.appendChild(modal);
         }
@@ -1441,6 +1526,7 @@
                 z-index: 1000;
                 animation: slideIn 0.3s ease;
                 font-size: 0.9em;
+                font-family: 'Quicksand', sans-serif;
             `;
             
             notification.innerHTML = `
@@ -1456,26 +1542,9 @@
                 notification.style.animation = 'slideOut 0.3s ease';
                 setTimeout(() => notification.remove(), 300);
             }, 3000);
-            
-            // Add CSS for animations
-            if (!document.querySelector('#notification-styles')) {
-                const style = document.createElement('style');
-                style.id = 'notification-styles';
-                style.textContent = `
-                    @keyframes slideIn {
-                        from { transform: translateX(100%); opacity: 0; }
-                        to { transform: translateX(0); opacity: 1; }
-                    }
-                    @keyframes slideOut {
-                        from { transform: translateX(0); opacity: 1; }
-                        to { transform: translateX(100%); opacity: 0; }
-                    }
-                `;
-                document.head.appendChild(style);
-            }
         }
 
-        // Prepare prompt for Gemini với yêu cầu markdown và LaTeX rõ ràng
+        // Prepare prompt for Gemini
         function preparePrompt(userText, files = []) {
             const subject = subjects[currentSubject];
             let prompt = `Bạn là một giáo viên AI thân thiện, hỗ trợ học sinh THCS trường Nguyễn Tri Phương.
@@ -1483,13 +1552,14 @@ Xưng hô: thầy/cô với học sinh là em.
 Chuyên môn: ${subject.name} theo chương trình giáo dục mới THCS Việt Nam.
 
 **QUAN TRỌNG:** Sử dụng markdown để định dạng câu trả lời:
-1. Tiêu đề: #, ##, ###
+1. Tiêu đề: #, ##, ###, ####
 2. In đậm: **văn bản**
 3. In nghiêng: *văn bản*
 4. Danh sách: - item hoặc 1. item
 5. Đường kẻ ngang: ---
 6. Code: \`code\` hoặc \`\`\`code block\`\`\`
 7. Công thức toán: $công_thức$ (inline) hoặc $$công_thức$$ (display)
+   KHÔNG BAO GIỜ tự thêm span hay class. Chỉ dùng $ và $$.
 
 Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư duy.\n\n`;
 
@@ -1577,7 +1647,7 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
             return textInfo;
         }
 
-        // Send message - FIXED không hiển thị lỗi khi thành công
+        // Send message
         async function sendMessage() {
             if (isProcessing) return;
             
@@ -1659,11 +1729,8 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
             } catch (error) {
                 console.error('Lỗi khi gửi tin nhắn:', error);
                 
-                // Chỉ hiển thị lỗi nếu thực sự có lỗi
-                if (!error.message.includes('AI chưa sẵn sàng')) {
-                    addMessage('bot', 'Xin lỗi, tạm thời không thể kết nối đến AI. Vui lòng thử lại sau.');
-                    showNotification('Có lỗi xảy ra khi xử lý yêu cầu', 'error');
-                }
+                addMessage('bot', 'Xin lỗi, tạm thời không thể kết nối đến AI. Vui lòng thử lại sau hoặc kiểm tra kết nối mạng.');
+                showNotification('Có lỗi xảy ra khi xử lý yêu cầu', 'error');
             }
             
             // Re-enable send button
@@ -1702,42 +1769,58 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
 
         // Logout
         function logout() {
-            auth.signOut().then(() => {
-                localStorage.removeItem('user');
-                // Xóa tất cả lịch sử chat
-                Object.keys(sessionStorage).forEach(key => {
-                    if (key.startsWith('chatHistory_')) {
-                        sessionStorage.removeItem(key);
-                    }
+            if (auth) {
+                auth.signOut().then(() => {
+                    localStorage.removeItem('user');
+                    // Clean up listeners
+                    cleanupFirestoreListeners();
+                    // Xóa tất cả lịch sử chat
+                    Object.keys(sessionStorage).forEach(key => {
+                        if (key.startsWith('chatHistory_')) {
+                            sessionStorage.removeItem(key);
+                        }
+                    });
+                    window.location.href = 'auth.html';
+                }).catch(error => {
+                    console.error('Lỗi đăng xuất:', error);
+                    window.location.href = 'auth.html';
                 });
+            } else {
                 window.location.href = 'auth.html';
-            }).catch(error => {
-                console.error('Lỗi đăng xuất:', error);
-                window.location.href = 'auth.html';
-            });
+            }
         }
 
         // Clear chat history on page unload
         window.addEventListener('beforeunload', function() {
-            Object.keys(sessionStorage).forEach(key => {
-                if (key.startsWith('chatHistory_')) {
-                    sessionStorage.removeItem(key);
-                }
-            });
+            cleanupFirestoreListeners();
         });
 
         // Initialize app
         async function initializeApp() {
-            initializeUser();
-            await loadSubjectKnowledge();
-            await loadHomeworkData();
-            
-            // Add welcome message if no history
-            if (chatHistory.length === 0) {
-                addMessage('bot', `Chào em! Thầy/cô là trợ lý AI học tập của trường THCS Nguyễn Tri Phương. 
-                               Em có thể hỏi bất cứ điều gì về môn **${subjects[currentSubject].name}**, 
-                               gửi file bài tập, hoặc yêu cầu giải thích chi tiết.`);
+            // Add notification styles
+            if (!document.querySelector('#notification-styles')) {
+                const style = document.createElement('style');
+                style.id = 'notification-styles';
+                style.textContent = `
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    @keyframes slideOut {
+                        from { transform: translateX(0); opacity: 1; }
+                        to { transform: translateX(100%); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
             }
+            
+            initializeUser();
+            
+            // Chỉ load data khi cần (lazy loading)
+            setTimeout(() => {
+                loadSubjectKnowledge();
+                loadHomeworkData();
+            }, 1000);
             
             // Set up subject buttons
             subjectButtons.forEach(button => {
@@ -1783,13 +1866,14 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
         }
 
         // Start the app
-        initializeApp();
+        document.addEventListener('DOMContentLoaded', initializeApp);
         
         // Make functions available globally
         window.viewImage = viewImage;
         window.removeAttachment = removeAttachment;
         window.logout = logout;
         window.goToIndex = goToIndex;
+        window.sendMessage = sendMessage;
     </script>
 </body>
 </html>
