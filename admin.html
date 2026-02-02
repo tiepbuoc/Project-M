@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý - THCS Nguyễn Tri Phương</title>
+    <title>Quản lý kiến thức - THCS Nguyễn Tri Phương</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -22,15 +22,10 @@
             background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
             min-height: 100vh;
             color: #333;
+            padding-top: 80px; /* Để tránh bị header che */
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header đồng bộ với index */
+        /* Header - GIỐNG INDEX */
         .header {
             background-color: rgba(255, 255, 255, 0.98);
             box-shadow: 0 2px 15px rgba(0,0,0,0.1);
@@ -38,124 +33,95 @@
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
+            width: 100%;
             z-index: 1000;
             padding: 15px 0;
+            border-bottom: 1px solid #e0e0e0;
         }
 
-        .nav-container {
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
         .logo-container {
             display: flex;
             align-items: center;
             gap: 15px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .logo-container:hover {
+            opacity: 0.9;
         }
 
         .logo {
-            height: 40px;
-            border-radius: 8px;
+            height: 50px;
+            border-radius: 10px;
         }
 
         .school-name {
-            font-size: 1.2em;
+            font-size: 1.3em;
             font-weight: 700;
             color: #26a69a;
         }
 
         .web-name {
-            font-size: 1em;
+            font-size: 1.1em;
             font-weight: 600;
             color: #666;
             margin-left: 10px;
         }
 
-        .user-section {
+        .admin-info {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
 
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 15px;
-            background: #f8f9fa;
-            border-radius: 25px;
-            transition: all 0.3s;
-        }
-
-        .user-info:hover {
-            background: #e9ecef;
-        }
-
-        .user-avatar {
-            width: 35px;
-            height: 35px;
+        .admin-avatar {
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #26a69a, #4CAF50);
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: 600;
-            font-size: 0.9em;
+            font-size: 1.2em;
         }
 
-        .user-details {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .user-name {
-            font-weight: 600;
-            color: #333;
-            font-size: 0.9em;
-        }
-
-        .auth-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .auth-btn {
+        .logout-btn {
+            background: #f5f5f5;
+            border: none;
             padding: 10px 20px;
             border-radius: 25px;
-            text-decoration: none;
-            font-weight: 600;
+            color: #666;
+            cursor: pointer;
             transition: all 0.3s;
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.9em;
-            border: none;
-            cursor: pointer;
-        }
-
-        .home-btn {
-            background: linear-gradient(45deg, #26a69a, #4CAF50);
-            color: white;
-            box-shadow: 0 4px 15px rgba(38, 166, 154, 0.3);
-        }
-
-        .home-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(38, 166, 154, 0.4);
-        }
-
-        .logout-btn {
-            background: #f8f9fa;
-            color: #666;
-            border: 1px solid #dee2e6;
+            font-weight: 500;
         }
 
         .logout-btn:hover {
-            background: #e9ecef;
+            background: #e0e0e0;
             color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
         /* Main Content */
@@ -163,7 +129,7 @@
             display: grid;
             grid-template-columns: 300px 1fr;
             gap: 30px;
-            margin-top: 90px;
+            margin-top: 30px;
         }
 
         /* Sidebar */
@@ -173,8 +139,6 @@
             padding: 25px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             height: fit-content;
-            position: sticky;
-            top: 100px;
         }
 
         .sidebar-title {
@@ -232,33 +196,19 @@
             gap: 10px;
         }
 
-        /* Subject Selection (dropdown) */
-        .subject-selection {
-            margin-bottom: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #333;
-        }
-
-        .form-input {
+        /* Subject Selection */
+        .subject-select {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            border-radius: 10px;
             font-family: 'Quicksand', sans-serif;
             font-size: 1em;
+            margin-bottom: 20px;
             transition: border-color 0.3s;
         }
 
-        .form-input:focus {
+        .subject-select:focus {
             border-color: #26a69a;
             outline: none;
             box-shadow: 0 0 0 3px rgba(38, 166, 154, 0.2);
@@ -426,6 +376,33 @@
             margin-top: 30px;
         }
 
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            border-color: #26a69a;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(38, 166, 154, 0.2);
+        }
+
         .form-textarea {
             width: 100%;
             height: 150px;
@@ -447,52 +424,15 @@
         /* Add Admin Form */
         .add-admin-form {
             background: #f8f9fa;
-            border: 2px dashed #dee2e6;
             border-radius: 10px;
             padding: 25px;
             margin-top: 30px;
-            margin-bottom: 30px;
+            border: 2px solid #e0e0e0;
         }
 
-        /* Users Management */
-        .users-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .stat-card.total {
-            background: linear-gradient(135deg, #26a69a, #4CAF50);
-        }
-
-        .stat-card.active {
-            background: linear-gradient(135deg, #2196F3, #21CBF3);
-        }
-
-        .stat-card.guest {
-            background: linear-gradient(135deg, #FF9800, #FFB74D);
-        }
-
-        .stat-card.admin {
-            background: linear-gradient(135deg, #9C27B0, #673AB7);
-        }
-
-        .stat-number {
-            font-size: 2em;
-            font-weight: 600;
-        }
-
-        .stat-label {
-            font-size: 0.9em;
-            opacity: 0.9;
+        /* Users List */
+        .users-list {
+            margin-top: 30px;
         }
 
         .user-item {
@@ -526,13 +466,18 @@
         .user-role {
             background: #4CAF50;
             color: white;
-            padding: 3px 8px;
-            border-radius: 10px;
+            padding: 3px 10px;
+            border-radius: 15px;
             font-size: 0.8em;
+            font-weight: 500;
         }
 
         .user-role.admin {
-            background: #9C27B0;
+            background: #f44336;
+        }
+
+        .user-role.student {
+            background: #2196F3;
         }
 
         .user-role.guest {
@@ -542,6 +487,7 @@
         .user-details {
             color: #666;
             font-size: 0.9em;
+            margin-top: 10px;
         }
 
         .user-actions {
@@ -572,25 +518,47 @@
             display: block;
         }
 
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: 600;
+            color: #26a69a;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
+            body {
+                padding-top: 70px;
+            }
+            
             .main-content {
                 grid-template-columns: 1fr;
             }
             
-            .sidebar {
-                position: static;
-            }
-            
-            .nav-container {
-                flex-wrap: wrap;
-            }
-            
-            .user-section {
-                order: 2;
-                width: 100%;
-                justify-content: center;
-                margin-top: 10px;
+            .header-content {
+                flex-direction: column;
+                text-align: center;
             }
             
             .editor-header {
@@ -602,10 +570,6 @@
                 justify-content: center;
             }
             
-            .user-details {
-                display: none;
-            }
-            
             .web-name {
                 display: none;
             }
@@ -614,47 +578,40 @@
                 display: none;
             }
             
-            .home-btn span {
-                display: none;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .school-name {
-                font-size: 1em;
-            }
-            
-            .auth-btn {
-                padding: 8px 15px;
-                font-size: 0.8em;
-            }
-            
-            .main-content {
-                margin-top: 120px;
+            .logout-btn {
+                width: 45px;
+                height: 45px;
+                padding: 0;
+                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header đồng bộ -->
+    <!-- Header GIỐNG INDEX -->
     <header class="header">
-        <div class="container">
-            <div class="nav-container">
-                <div class="logo-container">
-                    <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo trường" class="logo">
-                    <div>
-                        <div class="school-name">THCS Nguyễn Tri Phương</div>
-                        <div class="web-name">Hệ thống học tập AI</div>
-                    </div>
+        <div class="header-content">
+            <a href="index.html" class="logo-container">
+                <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo trường" class="logo">
+                <div>
+                    <div class="school-name">THCS Nguyễn Tri Phương</div>
+                    <div class="web-name">Quản trị hệ thống</div>
                 </div>
-                
-                <div class="user-section" id="userSection">
-                    <!-- Sẽ được cập nhật bằng JavaScript -->
+            </a>
+            
+            <div class="admin-info">
+                <div class="admin-avatar">A</div>
+                <div>
+                    <div style="font-weight: 600;">Quản trị viên</div>
+                    <div style="font-size: 0.9em; color: #666;" id="adminEmail">hmtpum002@gmail.com</div>
                 </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> <span>Đăng xuất</span>
+                </button>
             </div>
         </div>
     </header>
-
+    
     <div class="container">
         <!-- Main Content -->
         <div class="main-content">
@@ -698,15 +655,13 @@
                     
                     <div class="message" id="knowledgeMessage"></div>
                     
-                    <!-- Subject Selection (Dropdown) -->
-                    <div class="subject-selection">
-                        <div class="form-group">
-                            <label for="knowledgeSubject">Chọn môn học</label>
-                            <select class="form-input" id="knowledgeSubject">
-                                <option value="">Chọn môn học</option>
-                                <!-- Options will be loaded by JavaScript -->
-                            </select>
-                        </div>
+                    <!-- Subject Selection -->
+                    <div class="form-group">
+                        <label for="knowledgeSubject">Chọn môn học</label>
+                        <select class="subject-select" id="knowledgeSubject">
+                            <option value="">Chọn môn học</option>
+                            <!-- Options will be loaded by JavaScript -->
+                        </select>
                     </div>
                     
                     <!-- Knowledge Editor -->
@@ -795,27 +750,27 @@
                     <div class="message" id="usersMessage"></div>
                     
                     <!-- Users Stats -->
-                    <div class="users-stats">
-                        <div class="stat-card total">
-                            <div class="stat-number" id="totalUsers">0</div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalUsers">0</div>
                             <div class="stat-label">Tổng người dùng</div>
                         </div>
-                        <div class="stat-card active">
-                            <div class="stat-number" id="activeUsers">0</div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="activeUsers">0</div>
                             <div class="stat-label">Người dùng hoạt động</div>
                         </div>
-                        <div class="stat-card guest">
-                            <div class="stat-number" id="guestUsers">0</div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="guestUsers">0</div>
                             <div class="stat-label">Người dùng khách</div>
                         </div>
-                        <div class="stat-card admin">
-                            <div class="stat-number" id="adminUsers">0</div>
-                            <div class="stat-label">Quản trị viên</div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="studentUsers">0</div>
+                            <div class="stat-label">Học sinh</div>
                         </div>
                     </div>
                     
                     <!-- Users List -->
-                    <div id="usersList">
+                    <div class="users-list" id="usersList">
                         <!-- Users will be loaded here -->
                     </div>
                 </div>
@@ -831,22 +786,28 @@
                     <!-- Add Admin Form -->
                     <div class="add-admin-form">
                         <div class="content-title" style="font-size: 1.2em; margin-bottom: 20px;">
-                            <i class="fas fa-plus-circle"></i> Thêm quản trị viên
+                            <i class="fas fa-user-plus"></i> Thêm quản trị viên
                         </div>
                         
                         <div class="form-group">
-                            <label for="adminEmail">Email người dùng</label>
-                            <input type="email" class="form-input" id="adminEmail" 
+                            <label for="adminEmailInput">Email của người dùng</label>
+                            <input type="email" class="form-input" id="adminEmailInput" 
                                    placeholder="Nhập email của người dùng">
                         </div>
                         
+                        <div class="form-group">
+                            <label for="adminName">Tên hiển thị (tùy chọn)</label>
+                            <input type="text" class="form-input" id="adminName" 
+                                   placeholder="Nhập tên hiển thị">
+                        </div>
+                        
                         <button class="action-button primary" onclick="addAdmin()" style="width: 100%;">
-                            <i class="fas fa-user-plus"></i> Thêm quản trị viên
+                            <i class="fas fa-plus"></i> Thêm quản trị viên
                         </button>
                     </div>
                     
-                    <!-- Current Admins List -->
-                    <div id="adminsList">
+                    <!-- Admins List -->
+                    <div class="users-list" id="adminsList">
                         <!-- Admins will be loaded here -->
                     </div>
                 </div>
@@ -871,11 +832,11 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Admin emails cache
-        let adminEmails = new Set(['hmtpum002@gmail.com']);
+        // Admin email (default)
+        const DEFAULT_ADMIN_EMAIL = 'hmtpum002@gmail.com';
 
         // App state
-        let currentUser = null;
+        let currentAdminEmail = DEFAULT_ADMIN_EMAIL;
         let currentSubject = null;
         let currentKnowledge = '';
         let homeworkItems = [];
@@ -899,7 +860,6 @@
         ];
 
         // DOM Elements
-        const userSection = document.getElementById('userSection');
         const knowledgeSection = document.getElementById('knowledgeSection');
         const homeworkSection = document.getElementById('homeworkSection');
         const usersSection = document.getElementById('usersSection');
@@ -917,71 +877,58 @@
         const homeworkDifficulty = document.getElementById('homeworkDifficulty');
         const homeworkList = document.getElementById('homeworkList');
         const usersList = document.getElementById('usersList');
-        const adminsList = document.getElementById('adminsList');
         const totalUsers = document.getElementById('totalUsers');
         const activeUsers = document.getElementById('activeUsers');
         const guestUsers = document.getElementById('guestUsers');
-        const adminUsers = document.getElementById('adminUsers');
+        const studentUsers = document.getElementById('studentUsers');
         const usersMessage = document.getElementById('usersMessage');
         const adminsMessage = document.getElementById('adminsMessage');
-        const adminEmail = document.getElementById('adminEmail');
+        const adminEmailInput = document.getElementById('adminEmailInput');
+        const adminName = document.getElementById('adminName');
+        const adminsList = document.getElementById('adminsList');
+        const adminEmailDisplay = document.getElementById('adminEmail');
 
         // Check admin authentication
-        function checkAdminAuth() {
+        async function checkAdminAuth() {
             auth.onAuthStateChanged(async (user) => {
-                if (user) {
-                    currentUser = user;
-                    await loadAdminEmails();
-                    
-                    if (!adminEmails.has(user.email)) {
-                        window.location.href = 'index.html';
-                        return;
-                    }
-                    
-                    renderUserInfo(user);
-                    initializeApp();
-                } else {
+                if (!user) {
+                    // Not logged in, redirect to login
                     window.location.href = 'auth.html';
+                    return;
                 }
+                
+                currentAdminEmail = user.email;
+                adminEmailDisplay.textContent = user.email;
+                
+                // Check if user is admin
+                const isAdmin = await checkIfAdmin(user.email);
+                
+                if (!isAdmin) {
+                    // Not admin, redirect to home
+                    showMessage(knowledgeMessage, 'Bạn không có quyền truy cập trang quản trị', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                    return;
+                }
+                
+                // Load data
+                populateSubjectSelects();
+                loadAdmins();
             });
         }
 
-        // Load admin emails from Firestore
-        async function loadAdminEmails() {
-            try {
-                const snapshot = await db.collection('admins').get();
-                adminEmails = new Set(['hmtpum002@gmail.com']);
-                snapshot.forEach(doc => {
-                    adminEmails.add(doc.data().email);
-                });
-            } catch (error) {
-                console.error('Lỗi khi tải danh sách admin:', error);
-            }
-        }
-
-        // Render user information
-        function renderUserInfo(user) {
-            const displayName = user.displayName || 'Quản trị viên';
-            const email = user.email || '';
-            const firstLetter = displayName.charAt(0).toUpperCase();
+        // Check if user is admin
+        async function checkIfAdmin(email) {
+            if (!email) return false;
             
-            userSection.innerHTML = `
-                <div class="user-info">
-                    <div class="user-avatar">${firstLetter}</div>
-                    <div class="user-details">
-                        <div class="user-name">${displayName}</div>
-                        ${email ? `<div class="user-email">${email}</div>` : ''}
-                    </div>
-                </div>
-                <div class="auth-buttons">
-                    <a href="index.html" class="auth-btn home-btn">
-                        <i class="fas fa-home"></i> <span>Trang chủ</span>
-                    </a>
-                    <button onclick="logout()" class="auth-btn logout-btn">
-                        <i class="fas fa-sign-out-alt"></i> <span>Đăng xuất</span>
-                    </button>
-                </div>
-            `;
+            try {
+                const adminDoc = await db.collection('admins').doc(email).get();
+                return adminDoc.exists || email === DEFAULT_ADMIN_EMAIL;
+            } catch (error) {
+                console.error('Lỗi kiểm tra quyền admin:', error);
+                return false;
+            }
         }
 
         // Show section
@@ -1018,40 +965,51 @@
             }
         }
 
-        // Load subjects for dropdown
-        function loadSubjects() {
+        // Populate subject selects
+        function populateSubjectSelects() {
+            // Clear options
             knowledgeSubject.innerHTML = '<option value="">Chọn môn học</option>';
+            homeworkSubject.innerHTML = '<option value="">Chọn môn học</option>';
             
+            // Add options
             subjects.forEach(subject => {
-                const option = document.createElement('option');
-                option.value = subject.id;
-                option.textContent = subject.name;
-                knowledgeSubject.appendChild(option);
+                const option1 = document.createElement('option');
+                option1.value = subject.id;
+                option1.textContent = subject.name;
+                knowledgeSubject.appendChild(option1);
+                
+                const option2 = document.createElement('option');
+                option2.value = subject.id;
+                option2.textContent = subject.name;
+                homeworkSubject.appendChild(option2);
             });
             
-            // Set up subject selection change
-            knowledgeSubject.addEventListener('change', async (e) => {
-                currentSubject = e.target.value;
-                if (currentSubject) {
-                    const subject = subjects.find(s => s.id === currentSubject);
-                    currentSubjectTitle.textContent = `Kiến thức môn: ${subject.name}`;
-                    await loadSubjectKnowledge();
+            // Add event listener for knowledge subject select
+            knowledgeSubject.addEventListener('change', (e) => {
+                const subjectId = e.target.value;
+                if (subjectId) {
+                    const subject = subjects.find(s => s.id === subjectId);
+                    loadSubjectKnowledge(subjectId, subject.name);
                 } else {
+                    currentSubject = null;
                     currentSubjectTitle.textContent = 'Chọn môn học để chỉnh sửa';
                     knowledgeEditor.value = '';
+                    saveKnowledgeBtn.disabled = true;
+                    loadKnowledgeBtn.disabled = true;
                 }
             });
         }
 
-        // Load knowledge for selected subject
-        async function loadSubjectKnowledge() {
-            if (!currentSubject) return;
+        // Load subject knowledge
+        async function loadSubjectKnowledge(subjectId, subjectName) {
+            currentSubject = subjectId;
+            currentSubjectTitle.textContent = `Kiến thức môn: ${subjectName}`;
             
             saveKnowledgeBtn.disabled = false;
             loadKnowledgeBtn.disabled = false;
             
             try {
-                const docRef = db.collection('subject_knowledge').doc(currentSubject);
+                const docRef = db.collection('subject_knowledge').doc(subjectId);
                 const doc = await docRef.get();
                 
                 if (doc.exists) {
@@ -1091,7 +1049,7 @@
                     subject: currentSubject,
                     knowledge: newKnowledge,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedBy: currentUser.email
+                    updatedBy: currentAdminEmail
                 });
                 
                 currentKnowledge = newKnowledge;
@@ -1105,16 +1063,14 @@
             }
         }
 
+        // Load subjects (for backward compatibility)
+        function loadSubjects() {
+            // Already populated in populateSubjectSelects
+        }
+
         // Populate homework subjects dropdown
         function populateHomeworkSubjects() {
-            homeworkSubject.innerHTML = '<option value="">Chọn môn học</option>';
-            
-            subjects.forEach(subject => {
-                const option = document.createElement('option');
-                option.value = subject.id;
-                option.textContent = subject.name;
-                homeworkSubject.appendChild(option);
-            });
+            // Already populated in populateSubjectSelects
         }
 
         // Load homework
@@ -1201,6 +1157,7 @@
             const answer = homeworkAnswer.value.trim();
             const difficulty = homeworkDifficulty.value;
             
+            // Validation
             if (!subject) {
                 showMessage(homeworkMessage, 'Vui lòng chọn môn học', 'error');
                 return;
@@ -1223,12 +1180,16 @@
                     answer: answer,
                     difficulty: difficulty,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    createdBy: currentUser.email
+                    createdBy: currentAdminEmail
                 });
                 
+                // Clear form
                 homeworkQuestion.value = '';
                 homeworkAnswer.value = '';
+                
+                // Reload homework list
                 loadHomework();
+                
                 showMessage(homeworkMessage, 'Đã thêm bài tập thành công', 'success');
             } catch (error) {
                 console.error('Lỗi khi thêm bài tập:', error);
@@ -1260,35 +1221,32 @@
                 const snapshot = await db.collection('users').get();
                 
                 users = [];
-                let total = 0;
-                let active = 0;
-                let guests = 0;
-                let adminsCount = 0;
-                
                 snapshot.forEach(doc => {
-                    const userData = {
+                    users.push({
                         id: doc.id,
                         ...doc.data()
-                    };
-                    users.push(userData);
-                    total++;
-                    
-                    if (userData.lastLogin) active++;
-                    if (userData.role === 'guest') guests++;
-                    if (userData.role === 'admin') adminsCount++;
+                    });
                 });
                 
-                // Update stats
-                totalUsers.textContent = total;
-                activeUsers.textContent = active;
-                guestUsers.textContent = guests;
-                adminUsers.textContent = adminsCount;
-                
+                updateUserStats();
                 renderUsersList();
             } catch (error) {
                 console.error('Lỗi khi tải người dùng:', error);
                 usersList.innerHTML = '<div style="text-align: center; padding: 30px; color: #f44336;">Lỗi khi tải người dùng</div>';
             }
+        }
+
+        // Update user statistics
+        function updateUserStats() {
+            const total = users.length;
+            const active = users.filter(u => u.lastLogin).length;
+            const guests = users.filter(u => u.role === 'guest').length;
+            const students = users.filter(u => u.role === 'student').length;
+            
+            totalUsers.textContent = total;
+            activeUsers.textContent = active;
+            guestUsers.textContent = guests;
+            studentUsers.textContent = students;
         }
 
         // Render users list
@@ -1301,22 +1259,22 @@
             usersList.innerHTML = '';
             
             users.forEach(user => {
+                const isAdmin = user.role === 'admin' || user.email === DEFAULT_ADMIN_EMAIL;
+                const roleClass = isAdmin ? 'admin' : (user.role || 'student');
+                
                 const userCard = document.createElement('div');
                 userCard.className = 'user-item';
-                
-                const roleClass = user.role === 'admin' ? 'admin' : user.role === 'guest' ? 'guest' : '';
-                
                 userCard.innerHTML = `
                     <div class="user-header">
                         <div class="user-name">
                             ${user.name || 'Không có tên'}
                         </div>
-                        <span class="user-role ${roleClass}">
-                            ${user.role || 'student'}
-                        </span>
+                        <div class="user-role ${roleClass}">
+                            ${isAdmin ? 'Quản trị viên' : (user.role === 'guest' ? 'Khách' : 'Học sinh')}
+                        </div>
                     </div>
                     <div class="user-details">
-                        <div><i class="fas fa-envelope"></i> ${user.email}</div>
+                        <div><i class="fas fa-envelope"></i> ${user.email || 'Không có email'}</div>
                         <div><i class="fas fa-calendar"></i> Tạo: ${formatDate(user.createdAt)}</div>
                         ${user.lastLogin ? `<div><i class="fas fa-sign-in-alt"></i> Đăng nhập cuối: ${formatDate(user.lastLogin)}</div>` : ''}
                     </div>
@@ -1331,16 +1289,20 @@
             adminsList.innerHTML = '<div style="text-align: center; padding: 30px; color: #666;">Đang tải danh sách quản trị viên...</div>';
             
             try {
-                // Load from users collection where role is admin
-                const snapshot = await db.collection('users')
-                    .where('role', '==', 'admin')
-                    .get();
+                // Load default admin
+                admins = [{
+                    email: DEFAULT_ADMIN_EMAIL,
+                    name: 'Quản trị viên chính',
+                    isDefault: true
+                }];
                 
-                admins = [];
+                // Load other admins from Firestore
+                const snapshot = await db.collection('admins').get();
                 snapshot.forEach(doc => {
                     admins.push({
                         id: doc.id,
-                        ...doc.data()
+                        ...doc.data(),
+                        isDefault: false
                     });
                 });
                 
@@ -1360,31 +1322,37 @@
             
             adminsList.innerHTML = '';
             
-            admins.forEach(admin => {
+            admins.forEach((admin, index) => {
                 const adminCard = document.createElement('div');
                 adminCard.className = 'user-item';
+                
+                let actionsHtml = '';
+                if (!admin.isDefault) {
+                    actionsHtml = `
+                        <div class="user-actions">
+                            <button class="action-button danger" onclick="removeAdmin('${admin.id || admin.email}')" style="padding: 5px 10px; font-size: 0.9em;">
+                                <i class="fas fa-trash"></i> Xóa quyền
+                            </button>
+                        </div>
+                    `;
+                }
                 
                 adminCard.innerHTML = `
                     <div class="user-header">
                         <div class="user-name">
-                            ${admin.name || 'Không có tên'}
+                            ${admin.name || admin.email}
+                            ${admin.isDefault ? ' <span style="color: #f44336;">(Mặc định)</span>' : ''}
                         </div>
-                        <span class="user-role admin">
+                        <div class="user-role admin">
                             Quản trị viên
-                        </span>
+                        </div>
                     </div>
                     <div class="user-details">
                         <div><i class="fas fa-envelope"></i> ${admin.email}</div>
-                        <div><i class="fas fa-calendar"></i> Tạo: ${formatDate(admin.createdAt)}</div>
-                        ${admin.lastLogin ? `<div><i class="fas fa-sign-in-alt"></i> Đăng nhập cuối: ${formatDate(admin.lastLogin)}</div>` : ''}
+                        ${admin.createdAt ? `<div><i class="fas fa-calendar"></i> Thêm: ${formatDate(admin.createdAt)}</div>` : ''}
+                        ${admin.addedBy ? `<div><i class="fas fa-user"></i> Được thêm bởi: ${admin.addedBy}</div>` : ''}
                     </div>
-                    <div class="user-actions">
-                        ${admin.email !== currentUser.email ? `
-                            <button class="action-button danger" onclick="removeAdmin('${admin.id}', '${admin.email}')" style="padding: 5px 10px; font-size: 0.9em;">
-                                <i class="fas fa-trash"></i> Xóa quyền
-                            </button>
-                        ` : ''}
-                    </div>
+                    ${actionsHtml}
                 `;
                 
                 adminsList.appendChild(adminCard);
@@ -1393,8 +1361,10 @@
 
         // Add admin
         async function addAdmin() {
-            const email = adminEmail.value.trim();
+            const email = adminEmailInput.value.trim();
+            const name = adminName.value.trim();
             
+            // Validation
             if (!email) {
                 showMessage(adminsMessage, 'Vui lòng nhập email', 'error');
                 return;
@@ -1405,44 +1375,28 @@
                 return;
             }
             
-            if (adminEmails.has(email)) {
-                showMessage(adminsMessage, 'Email đã có quyền quản trị', 'error');
+            // Check if already admin
+            if (email === DEFAULT_ADMIN_EMAIL || admins.some(a => a.email === email)) {
+                showMessage(adminsMessage, 'Người dùng này đã là quản trị viên', 'error');
                 return;
             }
             
             try {
-                // Check if user exists
-                const userSnapshot = await db.collection('users')
-                    .where('email', '==', email)
-                    .limit(1)
-                    .get();
-                
-                if (userSnapshot.empty) {
-                    showMessage(adminsMessage, 'Người dùng không tồn tại trong hệ thống', 'error');
-                    return;
-                }
-                
-                const userDoc = userSnapshot.docs[0];
-                
-                // Update user role to admin
-                await db.collection('users').doc(userDoc.id).update({
-                    role: 'admin',
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                // Add to admins collection
-                await db.collection('admins').add({
+                await db.collection('admins').doc(email).set({
                     email: email,
-                    addedBy: currentUser.email,
-                    addedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    name: name || '',
+                    addedBy: currentAdminEmail,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                // Update cache
-                adminEmails.add(email);
+                // Clear form
+                adminEmailInput.value = '';
+                adminName.value = '';
                 
-                adminEmail.value = '';
+                // Reload admins list
                 loadAdmins();
-                showMessage(adminsMessage, 'Đã thêm quyền quản trị viên thành công', 'success');
+                
+                showMessage(adminsMessage, 'Đã thêm quản trị viên thành công', 'success');
             } catch (error) {
                 console.error('Lỗi khi thêm quản trị viên:', error);
                 showMessage(adminsMessage, 'Lỗi khi thêm quản trị viên', 'error');
@@ -1450,44 +1404,25 @@
         }
 
         // Remove admin
-        async function removeAdmin(userId, email) {
+        async function removeAdmin(adminId) {
             if (!confirm('Bạn có chắc chắn muốn xóa quyền quản trị viên này?')) {
                 return;
             }
             
-            if (email === currentUser.email) {
-                showMessage(adminsMessage, 'Không thể xóa quyền của chính mình', 'error');
-                return;
-            }
-            
             try {
-                // Update user role to student
-                await db.collection('users').doc(userId).update({
-                    role: 'student',
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                // Remove from admins collection
-                const snapshot = await db.collection('admins')
-                    .where('email', '==', email)
-                    .get();
-                
-                const deletePromises = [];
-                snapshot.forEach(doc => {
-                    deletePromises.push(doc.ref.delete());
-                });
-                
-                await Promise.all(deletePromises);
-                
-                // Update cache
-                adminEmails.delete(email);
-                
+                await db.collection('admins').doc(adminId).delete();
                 loadAdmins();
                 showMessage(adminsMessage, 'Đã xóa quyền quản trị viên thành công', 'success');
             } catch (error) {
                 console.error('Lỗi khi xóa quản trị viên:', error);
                 showMessage(adminsMessage, 'Lỗi khi xóa quản trị viên', 'error');
             }
+        }
+
+        // Validate email
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
         }
 
         // Format date
@@ -1498,18 +1433,13 @@
             return date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN');
         }
 
-        // Validate email
-        function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(email);
-        }
-
         // Show message
         function showMessage(element, text, type) {
             element.textContent = text;
             element.className = `message ${type}`;
             element.style.display = 'block';
             
+            // Auto hide after 5 seconds
             setTimeout(() => {
                 element.style.display = 'none';
             }, 5000);
@@ -1518,17 +1448,18 @@
         // Logout
         function logout() {
             auth.signOut().then(() => {
-                window.location.href = 'index.html';
+                window.location.href = 'auth.html';
             });
         }
 
         // Initialize app
         function initializeApp() {
+            checkAdminAuth();
             showSection('knowledge');
         }
 
         // Start the app
-        checkAdminAuth();
+        initializeApp();
     </script>
 </body>
 </html>
