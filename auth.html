@@ -36,8 +36,7 @@
             overflow: hidden;
         }
 
-        /* Logo Section thay cho Auth Header */
-        .logo-section {
+        .auth-header {
             background: linear-gradient(135deg, #26a69a, #4CAF50);
             color: white;
             padding: 30px;
@@ -53,19 +52,23 @@
         }
 
         .logo {
-            height: 60px;
+            height: 50px;
             border-radius: 10px;
         }
 
         .school-name {
-            font-size: 1.3em;
+            font-size: 1.2em;
             font-weight: 700;
         }
 
-        .system-name {
-            font-size: 1.1em;
+        .auth-header h1 {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .auth-header p {
             opacity: 0.9;
-            margin-top: 5px;
+            font-size: 0.9em;
         }
 
         .auth-tabs {
@@ -75,11 +78,11 @@
 
         .auth-tab {
             flex: 1;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
             background: none;
             border: none;
-            font-size: 1.1em;
+            font-size: 1em;
             font-weight: 600;
             color: #666;
             cursor: pointer;
@@ -93,11 +96,11 @@
         }
 
         .auth-form {
-            padding: 40px 30px;
+            padding: 30px;
         }
 
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
@@ -105,6 +108,7 @@
             margin-bottom: 8px;
             color: #333;
             font-weight: 500;
+            font-size: 0.9em;
         }
 
         .input-with-icon {
@@ -121,7 +125,7 @@
 
         .input-with-icon input {
             width: 100%;
-            padding: 15px 15px 15px 45px;
+            padding: 12px 12px 12px 45px;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             font-size: 1em;
@@ -136,12 +140,12 @@
 
         .auth-button {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             background: linear-gradient(135deg, #26a69a, #4CAF50);
             color: white;
             border: none;
             border-radius: 10px;
-            font-size: 1.1em;
+            font-size: 1em;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
@@ -163,7 +167,7 @@
 
         .divider {
             text-align: center;
-            margin: 30px 0;
+            margin: 20px 0;
             position: relative;
         }
 
@@ -186,12 +190,12 @@
 
         .guest-button {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             background: #6c757d;
             color: white;
             border: none;
             border-radius: 10px;
-            font-size: 1.1em;
+            font-size: 1em;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
@@ -209,19 +213,21 @@
         .error-message {
             background: #ffebee;
             color: #c62828;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             display: none;
+            font-size: 0.9em;
         }
 
         .success-message {
             background: #e8f5e9;
             color: #2e7d32;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             display: none;
+            font-size: 0.9em;
         }
 
         .password-toggle {
@@ -237,8 +243,9 @@
 
         .form-footer {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 15px;
             color: #666;
+            font-size: 0.9em;
         }
 
         .form-footer a {
@@ -253,9 +260,9 @@
 
         .loading-spinner {
             display: none;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
             border-radius: 50%;
             border-top-color: white;
             animation: spin 1s linear infinite;
@@ -270,36 +277,55 @@
                 max-width: 100%;
             }
             
-            .logo-section {
+            .auth-header {
+                padding: 20px;
+            }
+            
+            .auth-header h1 {
+                font-size: 1.3em;
+            }
+            
+            .auth-form {
                 padding: 20px;
             }
             
             .logo-container {
                 flex-direction: column;
                 text-align: center;
+                gap: 10px;
             }
             
             .logo {
-                height: 50px;
+                height: 40px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .auth-header h1 {
+                font-size: 1.2em;
             }
             
-            .auth-form {
-                padding: 30px 20px;
+            .auth-tab {
+                padding: 12px;
+                font-size: 0.9em;
+            }
+            
+            .input-with-icon input {
+                padding: 10px 10px 10px 40px;
+                font-size: 0.9em;
             }
         }
     </style>
 </head>
 <body>
     <div class="auth-container">
-        <!-- Logo Section thay cho Auth Header -->
-        <div class="logo-section">
+        <div class="auth-header">
             <div class="logo-container">
                 <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo trường" class="logo">
-                <div>
-                    <div class="school-name">THCS Nguyễn Tri Phương</div>
-                    <div class="system-name">Hệ thống học tập thông minh</div>
-                </div>
+                <div class="school-name">THCS Nguyễn Tri Phương</div>
             </div>
+            <h1>Hệ thống học tập thông minh</h1>
+            <p>Đăng nhập để trải nghiệm đầy đủ tính năng</p>
         </div>
         
         <div class="auth-tabs">
@@ -523,13 +549,6 @@
                 
                 showSuccess('Đăng nhập thành công! Chuyển hướng...');
                 
-                // Update last login time
-                await db.collection('users').doc(user.uid).update({
-                    lastLogin: firebase.firestore.FieldValue.serverTimestamp()
-                }).catch(() => {
-                    // User might not exist in users collection yet
-                });
-                
                 // Store user info in localStorage
                 localStorage.setItem('user', JSON.stringify({
                     uid: user.uid,
@@ -603,7 +622,6 @@
                     name: name,
                     email: email,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
                     role: 'student'
                 });
                 
