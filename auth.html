@@ -36,7 +36,8 @@
             overflow: hidden;
         }
 
-        .auth-header {
+        /* Logo Section thay cho Auth Header */
+        .logo-section {
             background: linear-gradient(135deg, #26a69a, #4CAF50);
             color: white;
             padding: 30px;
@@ -52,7 +53,7 @@
         }
 
         .logo {
-            height: 50px;
+            height: 60px;
             border-radius: 10px;
         }
 
@@ -61,14 +62,10 @@
             font-weight: 700;
         }
 
-        .auth-header h1 {
-            font-size: 1.8em;
-            margin-bottom: 10px;
-        }
-
-        .auth-header p {
+        .system-name {
+            font-size: 1.1em;
             opacity: 0.9;
-            font-size: 0.95em;
+            margin-top: 5px;
         }
 
         .auth-tabs {
@@ -96,7 +93,7 @@
         }
 
         .auth-form {
-            padding: 30px;
+            padding: 40px 30px;
         }
 
         .form-group {
@@ -273,16 +270,8 @@
                 max-width: 100%;
             }
             
-            .auth-header {
-                padding: 25px 20px;
-            }
-            
-            .auth-header h1 {
-                font-size: 1.6em;
-            }
-            
-            .auth-form {
-                padding: 25px 20px;
+            .logo-section {
+                padding: 20px;
             }
             
             .logo-container {
@@ -291,20 +280,26 @@
             }
             
             .logo {
-                height: 45px;
+                height: 50px;
+            }
+            
+            .auth-form {
+                padding: 30px 20px;
             }
         }
     </style>
 </head>
 <body>
     <div class="auth-container">
-        <div class="auth-header">
+        <!-- Logo Section thay cho Auth Header -->
+        <div class="logo-section">
             <div class="logo-container">
                 <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo trường" class="logo">
-                <div class="school-name">THCS Nguyễn Tri Phương</div>
+                <div>
+                    <div class="school-name">THCS Nguyễn Tri Phương</div>
+                    <div class="system-name">Hệ thống học tập thông minh</div>
+                </div>
             </div>
-            <h1>Hệ thống học tập thông minh</h1>
-            <p>Đăng nhập để trải nghiệm đầy đủ tính năng</p>
         </div>
         
         <div class="auth-tabs">
@@ -526,12 +521,14 @@
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 const user = userCredential.user;
                 
+                showSuccess('Đăng nhập thành công! Chuyển hướng...');
+                
                 // Update last login time
                 await db.collection('users').doc(user.uid).update({
                     lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                }).catch(() => {
+                    // User might not exist in users collection yet
                 });
-                
-                showSuccess('Đăng nhập thành công! Chuyển hướng...');
                 
                 // Store user info in localStorage
                 localStorage.setItem('user', JSON.stringify({
@@ -540,9 +537,9 @@
                     displayName: user.displayName
                 }));
                 
-                // Redirect to index page after 1.5 seconds
+                // Redirect to chatbot page after 1.5 seconds
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    window.location.href = 'chatbot.html';
                 }, 1500);
                 
             } catch (error) {
@@ -577,11 +574,13 @@
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('registerConfirmPassword').value;
             
+            // Validate password match
             if (password !== confirmPassword) {
                 showError('Mật khẩu xác nhận không khớp.');
                 return;
             }
             
+            // Validate password length
             if (password.length < 6) {
                 showError('Mật khẩu phải có ít nhất 6 ký tự.');
                 return;
@@ -594,10 +593,12 @@
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 const user = userCredential.user;
                 
+                // Update user profile
                 await user.updateProfile({
                     displayName: name
                 });
                 
+                // Create user document in Firestore
                 await db.collection('users').doc(user.uid).set({
                     name: name,
                     email: email,
@@ -608,14 +609,16 @@
                 
                 showSuccess('Đăng ký thành công! Chuyển hướng...');
                 
+                // Store user info in localStorage
                 localStorage.setItem('user', JSON.stringify({
                     uid: user.uid,
                     email: user.email,
                     displayName: name
                 }));
                 
+                // Redirect to chatbot page after 1.5 seconds
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    window.location.href = 'chatbot.html';
                 }, 1500);
                 
             } catch (error) {
@@ -646,6 +649,7 @@
             clearMessages();
             showSuccess('Chào mừng bạn đến với hệ thống học tập!');
             
+            // Store guest info in localStorage
             localStorage.setItem('user', JSON.stringify({
                 uid: 'guest_' + Date.now(),
                 email: null,
@@ -653,6 +657,7 @@
                 isGuest: true
             }));
             
+            // Redirect to chatbot page after 1 second
             setTimeout(() => {
                 window.location.href = 'chatbot.html';
             }, 1000);
@@ -661,8 +666,9 @@
         // Check if user is already logged in
         auth.onAuthStateChanged((user) => {
             if (user && !window.location.pathname.includes('chatbot.html')) {
+                // User is signed in, redirect to chatbot
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    window.location.href = 'chatbot.html';
                 }, 1000);
             }
         });
