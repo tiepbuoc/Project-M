@@ -40,8 +40,7 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            max-width: 1400px;
-            margin: 0 auto;
+            width: 100%;
             padding: 0;
         }
 
@@ -55,8 +54,10 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid #e0e0e0;
-            position: sticky;
+            position: fixed;
             top: 0;
+            left: 0;
+            width: 100%;
             z-index: 100;
         }
 
@@ -76,6 +77,12 @@
             font-size: 1.2em;
             font-weight: 700;
             color: #26a69a;
+        }
+
+        .web-name {
+            font-size: 1em;
+            font-weight: 600;
+            color: #666;
         }
 
         .user-info {
@@ -125,6 +132,8 @@
             flex: 1;
             overflow: hidden;
             position: relative;
+            margin-top: 70px;
+            height: calc(100vh - 70px);
         }
 
         /* Sidebar */
@@ -137,14 +146,15 @@
             padding: 20px;
             overflow-y: auto;
             transition: transform 0.3s ease;
+            z-index: 99;
         }
 
         .sidebar-toggle {
             display: none;
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: #4CAF50;
+            position: fixed;
+            top: 85px;
+            left: 20px;
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
             color: white;
             border: none;
             border-radius: 50%;
@@ -155,6 +165,7 @@
             align-items: center;
             justify-content: center;
             font-size: 1.2em;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
         .sidebar-section {
@@ -205,6 +216,7 @@
             display: flex;
             flex-direction: column;
             background: white;
+            width: 100%;
         }
 
         .chat-header {
@@ -236,7 +248,7 @@
 
         .message {
             margin-bottom: 20px;
-            max-width: 80%;
+            max-width: 85%;
             animation: fadeIn 0.3s ease;
         }
 
@@ -258,7 +270,7 @@
             border-radius: 20px;
             position: relative;
             word-wrap: break-word;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .user-message .message-content {
@@ -271,9 +283,10 @@
             background: linear-gradient(145deg, #e3f2fd, #bbdefb);
             color: #212121;
             border-bottom-left-radius: 5px;
+            overflow-wrap: break-word;
         }
 
-        /* Markdown Styling */
+        /* Markdown Styling - FIXED */
         .message-content strong {
             font-weight: 700;
         }
@@ -284,71 +297,102 @@
 
         .message-content code {
             background: rgba(0, 0, 0, 0.05);
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95em;
         }
 
         .message-content pre {
             background: #2d2d2d;
             color: #f8f8f2;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 12px;
+            border-radius: 8px;
             overflow-x: auto;
-            margin: 10px 0;
+            margin: 12px 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
         }
 
         .message-content pre code {
             background: transparent;
             padding: 0;
             color: inherit;
+            font-size: inherit;
         }
 
         .message-content h1,
         .message-content h2,
         .message-content h3 {
-            margin: 15px 0 10px 0;
+            margin: 16px 0 10px 0;
             color: #2c3e50;
+            font-weight: 600;
         }
+
+        .message-content h1 { font-size: 1.4em; }
+        .message-content h2 { font-size: 1.3em; }
+        .message-content h3 { font-size: 1.2em; }
 
         .message-content ul,
         .message-content ol {
-            margin: 10px 0 10px 20px;
+            margin: 10px 0 10px 24px;
         }
 
         .message-content li {
-            margin-bottom: 5px;
+            margin-bottom: 6px;
         }
 
         .message-content blockquote {
             border-left: 4px solid #4CAF50;
-            padding-left: 15px;
-            margin: 10px 0;
+            padding-left: 16px;
+            margin: 12px 0;
             color: #555;
             font-style: italic;
         }
 
-        .katex {
-            font-size: 1.1em !important;
-        }
-
         .message-content table {
             border-collapse: collapse;
-            margin: 10px 0;
+            margin: 12px 0;
             width: 100%;
+            font-size: 0.95em;
         }
 
         .message-content th,
         .message-content td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 10px;
             text-align: left;
         }
 
         .message-content th {
             background-color: #f2f2f2;
             font-weight: 600;
+        }
+
+        /* Katex Styling - FIXED */
+        .katex {
+            font-size: 1.05em !important;
+            font-family: 'KaTeX_Main', 'Times New Roman', serif !important;
+        }
+
+        .katex-display {
+            overflow: auto hidden;
+            padding: 8px 0;
+            margin: 12px 0;
+        }
+
+        .katex-display > .katex {
+            max-width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        .message-content .katex-error {
+            color: #d32f2f;
+            background: #ffebee;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
         }
 
         .message-time {
@@ -527,6 +571,8 @@
             
             .main-content {
                 flex-direction: row;
+                margin-top: 70px;
+                height: calc(100vh - 70px);
             }
             
             .sidebar-toggle {
@@ -534,12 +580,13 @@
             }
             
             .sidebar {
-                position: absolute;
+                position: fixed;
                 left: 0;
-                top: 0;
-                height: 100%;
+                top: 70px;
+                height: calc(100vh - 70px);
                 z-index: 100;
                 transform: translateX(-100%);
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
             }
             
             .sidebar.show {
@@ -549,16 +596,20 @@
             .sidebar-overlay {
                 display: none;
                 position: fixed;
-                top: 0;
+                top: 70px;
                 left: 0;
                 width: 100%;
-                height: 100%;
+                height: calc(100vh - 70px);
                 background: rgba(0,0,0,0.5);
                 z-index: 99;
             }
             
             .sidebar-overlay.show {
                 display: block;
+            }
+            
+            .chat-area {
+                width: 100%;
             }
             
             .sidebar-section {
@@ -595,6 +646,10 @@
                 height: 45px;
             }
             
+            .web-name {
+                display: none;
+            }
+            
             .user-info .user-name {
                 display: none;
             }
@@ -610,131 +665,159 @@
             }
             
             .subject-button {
-                font-size: 0.8em;
+                font-size: 0.85em;
+            }
+            
+            .header {
+                padding: 12px 15px;
+            }
+            
+            .logo {
+                height: 35px;
+            }
+            
+            .main-content {
+                margin-top: 65px;
+                height: calc(100vh - 65px);
+            }
+            
+            .sidebar {
+                top: 65px;
+                height: calc(100vh - 65px);
+            }
+            
+            .sidebar-overlay {
+                top: 65px;
+                height: calc(100vh - 65px);
+            }
+            
+            .sidebar-toggle {
+                top: 75px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header ĐỒNG BỘ -->
-        <div class="header">
-            <div class="logo-container" onclick="goToIndex()">
-                <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo trường" class="logo">
+    <!-- Header ĐỒNG BỘ -->
+    <div class="header">
+        <div class="logo-container" onclick="goToIndex()">
+            <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo trường" class="logo">
+            <div>
                 <div class="school-name">THCS Nguyễn Tri Phương</div>
+                <div class="web-name">Hệ thống học tập AI</div>
+            </div>
+        </div>
+        
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">K</div>
+            <div class="user-name" id="userName">Khách</div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Đăng xuất</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Sidebar Toggle Button (mobile only) -->
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars" id="sidebarToggleIcon"></i>
+        </button>
+        
+        <!-- Sidebar Overlay (mobile only) -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">
+                    <i class="fas fa-book-open"></i> Môn học
+                </div>
+                <button class="subject-button active" data-subject="toan-dai">
+                    <i class="fas fa-calculator"></i> Toán Đại Số
+                </button>
+                <button class="subject-button" data-subject="toan-hinh">
+                    <i class="fas fa-shapes"></i> Toán Hình Học
+                </button>
+                <button class="subject-button" data-subject="ngu-van">
+                    <i class="fas fa-book"></i> Ngữ Văn
+                </button>
             </div>
             
-            <div class="user-info">
-                <div class="user-avatar" id="userAvatar">K</div>
-                <div class="user-name" id="userName">Khách</div>
-                <button class="logout-btn" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Đăng xuất</span>
+            <div class="sidebar-section">
+                <div class="sidebar-title">
+                    <i class="fas fa-flask"></i> Khoa học
+                </div>
+                <button class="subject-button" data-subject="khtn">
+                    <i class="fas fa-atom"></i> KHTN
+                </button>
+                <button class="subject-button" data-subject="lich-su-dia-ly">
+                    <i class="fas fa-map"></i> Lịch Sử & Địa Lý
+                </button>
+                <button class="subject-button" data-subject="cong-nghe">
+                    <i class="fas fa-robot"></i> Công Nghệ
+                </button>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">
+                    <i class="fas fa-language"></i> Ngôn ngữ
+                </div>
+                <button class="subject-button" data-subject="anh-van">
+                    <i class="fas fa-globe"></i> Anh Văn
+                </button>
+                <button class="subject-button" data-subject="tin-hoc">
+                    <i class="fas fa-laptop-code"></i> Tin Học
+                </button>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">
+                    <i class="fas fa-users"></i> Khác
+                </div>
+                <button class="subject-button" data-subject="gdcd">
+                    <i class="fas fa-balance-scale"></i> GDCD
+                </button>
+                <button class="subject-button" data-subject="hdtn-hn">
+                    <i class="fas fa-hands-helping"></i> HĐTN - HN
+                </button>
+                <button class="subject-button" data-subject="stem">
+                    <i class="fas fa-cogs"></i> STEM
                 </button>
             </div>
         </div>
         
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Sidebar Toggle Button (mobile only) -->
-            <button class="sidebar-toggle" id="sidebarToggle">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-            <!-- Sidebar Overlay (mobile only) -->
-            <div class="sidebar-overlay" id="sidebarOverlay"></div>
-            
-            <!-- Sidebar -->
-            <div class="sidebar" id="sidebar">
-                <div class="sidebar-section">
-                    <div class="sidebar-title">
-                        <i class="fas fa-book-open"></i> Môn học
-                    </div>
-                    <button class="subject-button active" data-subject="toan-dai">
-                        <i class="fas fa-calculator"></i> Toán Đại Số
-                    </button>
-                    <button class="subject-button" data-subject="toan-hinh">
-                        <i class="fas fa-shapes"></i> Toán Hình Học
-                    </button>
-                    <button class="subject-button" data-subject="ngu-van">
-                        <i class="fas fa-book"></i> Ngữ Văn
-                    </button>
-                </div>
-                
-                <div class="sidebar-section">
-                    <div class="sidebar-title">
-                        <i class="fas fa-flask"></i> Khoa học
-                    </div>
-                    <button class="subject-button" data-subject="khtn">
-                        <i class="fas fa-atom"></i> KHTN
-                    </button>
-                    <button class="subject-button" data-subject="lich-su-dia-ly">
-                        <i class="fas fa-map"></i> Lịch Sử & Địa Lý
-                    </button>
-                    <button class="subject-button" data-subject="cong-nghe">
-                        <i class="fas fa-robot"></i> Công Nghệ
-                    </button>
-                </div>
-                
-                <div class="sidebar-section">
-                    <div class="sidebar-title">
-                        <i class="fas fa-language"></i> Ngôn ngữ
-                    </div>
-                    <button class="subject-button" data-subject="anh-van">
-                        <i class="fas fa-globe"></i> Anh Văn
-                    </button>
-                    <button class="subject-button" data-subject="tin-hoc">
-                        <i class="fas fa-laptop-code"></i> Tin Học
-                    </button>
-                </div>
-                
-                <div class="sidebar-section">
-                    <div class="sidebar-title">
-                        <i class="fas fa-users"></i> Khác
-                    </div>
-                    <button class="subject-button" data-subject="gdcd">
-                        <i class="fas fa-balance-scale"></i> GDCD
-                    </button>
-                    <button class="subject-button" data-subject="hdtn-hn">
-                        <i class="fas fa-hands-helping"></i> HĐTN - HN
-                    </button>
-                    <button class="subject-button" data-subject="stem">
-                        <i class="fas fa-cogs"></i> STEM
-                    </button>
+        <!-- Chat Area -->
+        <div class="chat-area">
+            <div class="chat-header">
+                <h2><i class="fas fa-robot"></i> Chatbot AI học tập</h2>
+                <div class="chat-header-info" id="subjectInfo">
+                    Chào em! Thầy/cô sẵn sàng hỗ trợ em học môn <strong>Toán Đại Số</strong>. 
+                    Em có thể hỏi bài, gửi file hoặc yêu cầu bài tập.
                 </div>
             </div>
             
-            <!-- Chat Area -->
-            <div class="chat-area">
-                <div class="chat-header">
-                    <h2><i class="fas fa-robot"></i> Chatbot AI học tập</h2>
-                    <div class="chat-header-info" id="subjectInfo">
-                        Chào em! Thầy/cô sẵn sàng hỗ trợ em học môn <strong>Toán Đại Số</strong>. 
-                        Em có thể hỏi bài, gửi file hoặc yêu cầu bài tập.
-                    </div>
-                </div>
+            <div class="messages-container" id="messagesContainer">
+                <!-- Messages will be loaded here -->
+            </div>
+            
+            <!-- Attachment Preview -->
+            <div class="attachment-preview" id="attachmentPreview"></div>
+            
+            <!-- Input Area -->
+            <div class="input-area">
+                <input type="file" id="fileInput" class="file-input" multiple accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.txt,.ppt,.pptx">
+                <button class="file-button" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-paperclip"></i>
+                </button>
                 
-                <div class="messages-container" id="messagesContainer">
-                    <!-- Messages will be loaded here -->
-                </div>
+                <input type="text" class="message-input" id="messageInput" 
+                       placeholder="Hỏi thầy/cô điều gì đó..." autocomplete="off">
                 
-                <!-- Attachment Preview -->
-                <div class="attachment-preview" id="attachmentPreview"></div>
-                
-                <!-- Input Area -->
-                <div class="input-area">
-                    <input type="file" id="fileInput" class="file-input" multiple accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.txt,.ppt,.pptx">
-                    <button class="file-button" onclick="document.getElementById('fileInput').click()">
-                        <i class="fas fa-paperclip"></i>
-                    </button>
-                    
-                    <input type="text" class="message-input" id="messageInput" 
-                           placeholder="Hỏi thầy/cô điều gì đó..." autocomplete="off">
-                    
-                    <button class="send-button" id="sendButton" onclick="sendMessage()">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
+                <button class="send-button" id="sendButton" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -759,7 +842,7 @@
         const db = firebase.firestore();
 
         // Initialize Gemini AI
-        const GEMINI_API_KEY = "Aq3zf7e2zfwbyAvKmhjfNZcLOuq1990QAySazIA".split("").reverse().join("");
+        const GEMINI_API_KEY = "I2KvIpFfUmO_NoGghLU9ZXp-_sDB4xftCySazIA".split("").reverse().join("");
         
         let genAI, model;
         try {
@@ -790,6 +873,7 @@
         const subjectButtons = document.querySelectorAll('.subject-button');
         const sidebar = document.getElementById('sidebar');
         const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarToggleIcon = document.getElementById('sidebarToggleIcon');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
 
         // App State
@@ -799,6 +883,7 @@
         let subjectKnowledge = {};
         let homeworkData = {};
         let chatHistory = [];
+        let isProcessing = false; // Flag to prevent duplicate messages
 
         // Subject definitions
         const subjects = {
@@ -879,8 +964,8 @@
                 userAvatar.textContent = 'K';
             }
             
-            // Load chat history from localStorage
-            const savedHistory = localStorage.getItem(`chatHistory_${currentUser.uid}_${currentSubject}`);
+            // Load chat history from sessionStorage instead of localStorage
+            const savedHistory = sessionStorage.getItem(`chatHistory_${currentUser.uid}_${currentSubject}`);
             if (savedHistory) {
                 try {
                     chatHistory = JSON.parse(savedHistory);
@@ -892,13 +977,20 @@
             }
         }
 
-        // Save chat history
+        // Save chat history (using sessionStorage)
         function saveChatHistory() {
             try {
-                localStorage.setItem(`chatHistory_${currentUser.uid}_${currentSubject}`, JSON.stringify(chatHistory));
+                sessionStorage.setItem(`chatHistory_${currentUser.uid}_${currentSubject}`, JSON.stringify(chatHistory));
             } catch (error) {
                 console.error('Lỗi khi lưu lịch sử chat:', error);
             }
+        }
+
+        // Clear chat history
+        function clearChatHistory() {
+            chatHistory = [];
+            sessionStorage.removeItem(`chatHistory_${currentUser.uid}_${currentSubject}`);
+            messagesContainer.innerHTML = '';
         }
 
         // Display chat history
@@ -971,8 +1063,8 @@
             subjectInfo.innerHTML = `Chào em! Thầy/cô sẵn sàng hỗ trợ em học môn <strong>${subjectName}</strong>. 
                                    Em có thể hỏi bài, gửi file hoặc yêu cầu bài tập.`;
             
-            // Load chat history for new subject
-            const savedHistory = localStorage.getItem(`chatHistory_${currentUser.uid}_${currentSubject}`);
+            // Load chat history for new subject from sessionStorage
+            const savedHistory = sessionStorage.getItem(`chatHistory_${currentUser.uid}_${currentSubject}`);
             if (savedHistory) {
                 try {
                     chatHistory = JSON.parse(savedHistory);
@@ -987,7 +1079,7 @@
             messagesContainer.innerHTML = '';
             if (chatHistory.length === 0) {
                 // Add welcome message for new subject
-                const welcomeMessage = `Thầy/cô chuyển sang hỗ trợ em học môn <strong>${subjectName}</strong>. 
+                const welcomeMessage = `Thầy/cô chuyển sang hỗ trợ em học môn **${subjectName}**. 
                                       ${subjects[subject]?.icon ? `<i class="fas fa-${subjects[subject].icon}"></i> ` : ''}
                                       Em có câu hỏi nào không?`;
                 
@@ -1002,7 +1094,53 @@
             }
         }
 
-        // Add message to display với định dạng markdown
+        // Process text for markdown - FIXED VERSION
+        function processMarkdown(text) {
+            if (!text) return '';
+            
+            // First, escape HTML tags
+            let processedText = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            
+            // Process code blocks first (to prevent other markdown inside)
+            processedText = processedText.replace(/```([\s\S]*?)```/g, function(match, code) {
+                return `<pre><code>${code.trim()}</code></pre>`;
+            });
+            
+            // Process inline code
+            processedText = processedText.replace(/`([^`]+)`/g, '<code>$1</code>');
+            
+            // Process bold
+            processedText = processedText.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+            processedText = processedText.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+            
+            // Process italic
+            processedText = processedText.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+            processedText = processedText.replace(/_([^_]+)_/g, '<em>$1</em>');
+            
+            // Process headers
+            processedText = processedText.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+            processedText = processedText.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+            processedText = processedText.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+            
+            // Process lists
+            processedText = processedText.replace(/^\s*[-*+] (.*$)/gm, '<li>$1</li>');
+            processedText = processedText.replace(/^\s*\d+\. (.*$)/gm, '<li>$1</li>');
+            
+            // Wrap consecutive list items in ul/ol
+            processedText = processedText.replace(/(<li>.*<\/li>\n?)+/g, function(match) {
+                return '<ul>' + match + '</ul>';
+            });
+            
+            // Process blockquotes
+            processedText = processedText.replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>');
+            
+            // Process line breaks
+            processedText = processedText.replace(/\n/g, '<br>');
+            
+            return processedText;
+        }
+
+        // Add message to display với định dạng markdown đã sửa
         function addMessageToDisplay(sender, text, files = []) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}-message`;
@@ -1038,23 +1176,12 @@
                 fileHtml += '</div>';
             }
             
-            // Convert markdown to HTML
+            // Process text for markdown
             let htmlContent = '';
             if (sender === 'bot') {
-                // Sử dụng marked để chuyển markdown thành HTML
-                try {
-                    htmlContent = marked.parse(text, {
-                        breaks: true,
-                        gfm: true,
-                        headerIds: true,
-                        mangle: false
-                    });
-                } catch (error) {
-                    console.error('Lỗi khi parse markdown:', error);
-                    htmlContent = text;
-                }
+                htmlContent = processMarkdown(text);
             } else {
-                htmlContent = text;
+                htmlContent = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
             }
             
             messageDiv.innerHTML = `
@@ -1067,21 +1194,35 @@
             
             // Render LaTeX trong tin nhắn bot
             if (sender === 'bot') {
-                renderMathInElement(messageDiv);
+                renderMathInElement(messageDiv.querySelector('.message-content'));
             }
         }
 
-        // Render LaTeX trong một element
+        // Render LaTeX trong một element - FIXED VERSION
         function renderMathInElement(element) {
-            renderMathInElement(element, {
-                delimiters: [
-                    {left: '$$', right: '$$', display: true},
-                    {left: '$', right: '$', display: false},
-                    {left: '\\(', right: '\\)', display: false},
-                    {left: '\\[', right: '\\]', display: true}
-                ],
-                throwOnError: false
-            });
+            if (!element) return;
+            
+            try {
+                renderMathInElement(element, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false,
+                    errorColor: '#d32f2f',
+                    macros: {
+                        "\\RR": "\\mathbb{R}",
+                        "\\NN": "\\mathbb{N}",
+                        "\\ZZ": "\\mathbb{Z}",
+                        "\\QQ": "\\mathbb{Q}",
+                        "\\CC": "\\mathbb{C}"
+                    }
+                });
+            } catch (error) {
+                console.error('Lỗi render LaTeX:', error);
+            }
         }
 
         // Render LaTeX trong tất cả tin nhắn
@@ -1092,7 +1233,7 @@
             });
         }
 
-        // Add message và lưu vào history
+        // Add message và lưu vào history (chỉ lưu vào sessionStorage)
         function addMessage(sender, text, files = []) {
             addMessageToDisplay(sender, text, files);
             
@@ -1251,15 +1392,16 @@
             const notification = document.createElement('div');
             notification.style.cssText = `
                 position: fixed;
-                top: 20px;
+                top: 80px;
                 right: 20px;
-                padding: 15px 20px;
+                padding: 12px 18px;
                 background: ${type === 'error' ? '#f44336' : type === 'warning' ? '#ff9800' : '#4CAF50'};
                 color: white;
                 border-radius: 10px;
                 box-shadow: 0 5px 15px rgba(0,0,0,0.2);
                 z-index: 1000;
                 animation: slideIn 0.3s ease;
+                font-size: 0.9em;
             `;
             
             notification.innerHTML = `
@@ -1387,8 +1529,10 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
             return textInfo;
         }
 
-        // Send message
+        // Send message - FIXED VERSION (không hiển thị lỗi khi đã trả lời thành công)
         async function sendMessage() {
+            if (isProcessing) return;
+            
             const text = messageInput.value.trim();
             
             if (!text && attachedFiles.length === 0) {
@@ -1414,6 +1558,7 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
             
             // Disable send button and show loading
             sendButton.disabled = true;
+            isProcessing = true;
             sendButton.innerHTML = '<div class="loading-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
             
             try {
@@ -1424,6 +1569,7 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
                         addMessage('bot', `Chào em! Thầy/cô rất vui được hỗ trợ em học môn **${subjects[currentSubject].name}**. 
                                        \n\nEm có câu hỏi gì về bài học hôm nay không?`);
                         sendButton.disabled = false;
+                        isProcessing = false;
                         sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
                     }, 500);
                     return;
@@ -1489,6 +1635,7 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
             } catch (error) {
                 console.error('Lỗi khi gửi tin nhắn:', error);
                 
+                // Chỉ hiển thị lỗi nếu thực sự có lỗi
                 let errorMessage = 'Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau.';
                 
                 if (error.message.includes('mạng')) {
@@ -1499,12 +1646,16 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
                     errorMessage = 'AI đang được cập nhật. Vui lòng thử lại sau.';
                 }
                 
-                addMessage('bot', errorMessage);
-                showNotification('Có lỗi xảy ra khi xử lý yêu cầu', 'error');
+                // Chỉ hiển thị lỗi nếu thực sự cần
+                if (!error.message.includes('AI chưa sẵn sàng')) {
+                    addMessage('bot', errorMessage);
+                    showNotification('Có lỗi xảy ra khi xử lý yêu cầu', 'error');
+                }
             }
             
             // Re-enable send button
             sendButton.disabled = false;
+            isProcessing = false;
             sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
         }
 
@@ -1512,11 +1663,15 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
         function showSidebar() {
             sidebar.classList.add('show');
             sidebarOverlay.classList.add('show');
+            sidebarToggleIcon.classList.remove('fa-bars');
+            sidebarToggleIcon.classList.add('fa-times');
         }
 
         function hideSidebar() {
             sidebar.classList.remove('show');
             sidebarOverlay.classList.remove('show');
+            sidebarToggleIcon.classList.remove('fa-times');
+            sidebarToggleIcon.classList.add('fa-bars');
         }
 
         // Handle Enter key
@@ -1529,23 +1684,37 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
 
         // Go to index
         function goToIndex() {
-            saveChatHistory();
+            // Không lưu lịch sử khi chuyển trang
             window.location.href = 'index.html';
         }
 
         // Logout
         function logout() {
-            // Save chat history before logout
-            saveChatHistory();
-            
+            // Không lưu lịch sử khi đăng xuất
             auth.signOut().then(() => {
                 localStorage.removeItem('user');
+                // Xóa tất cả lịch sử chat trong sessionStorage
+                Object.keys(sessionStorage).forEach(key => {
+                    if (key.startsWith('chatHistory_')) {
+                        sessionStorage.removeItem(key);
+                    }
+                });
                 window.location.href = 'auth.html';
             }).catch(error => {
                 console.error('Lỗi đăng xuất:', error);
                 window.location.href = 'auth.html';
             });
         }
+
+        // Clear chat history on page unload
+        window.addEventListener('beforeunload', function() {
+            // Xóa lịch sử chat khi đóng/refresh trang
+            Object.keys(sessionStorage).forEach(key => {
+                if (key.startsWith('chatHistory_')) {
+                    sessionStorage.removeItem(key);
+                }
+            });
+        });
 
         // Initialize app
         async function initializeApp() {
@@ -1556,7 +1725,7 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
             // Add welcome message if no history
             if (chatHistory.length === 0) {
                 addMessage('bot', `Chào em! Thầy/cô là trợ lý AI học tập của trường THCS Nguyễn Tri Phương. 
-                               \n\nEm có thể hỏi bất cứ điều gì về môn **${subjects[currentSubject].name}**, 
+                               Em có thể hỏi bất cứ điều gì về môn **${subjects[currentSubject].name}**, 
                                gửi file bài tập, hoặc yêu cầu giải thích chi tiết.`);
             }
             
@@ -1568,7 +1737,14 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
             });
             
             // Set up sidebar toggle
-            sidebarToggle.addEventListener('click', showSidebar);
+            sidebarToggle.addEventListener('click', function() {
+                if (sidebar.classList.contains('show')) {
+                    hideSidebar();
+                } else {
+                    showSidebar();
+                }
+            });
+            
             sidebarOverlay.addEventListener('click', hideSidebar);
             
             // Close sidebar when clicking outside on mobile
@@ -1578,6 +1754,16 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
                     !sidebarToggle.contains(e.target) &&
                     sidebar.classList.contains('show')) {
                     hideSidebar();
+                }
+            });
+            
+            // Auto-hide sidebar on desktop when resizing to mobile
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    sidebar.classList.remove('show');
+                    sidebarOverlay.classList.remove('show');
+                    sidebarToggleIcon.classList.remove('fa-times');
+                    sidebarToggleIcon.classList.add('fa-bars');
                 }
             });
             
