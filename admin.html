@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý kiến thức - THCS Nguyễn Tri Phương</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            height: 50px;
+            border-radius: 10px;
+        }
+
+        .school-name {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #26a69a;
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2em;
+        }
+
+        .logout-btn {
+            background: #f5f5f5;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .logout-btn:hover {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .sidebar-title {
+            color: #26a69a;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            color: #333;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: linear-gradient(135deg, #26a69a, #4CAF50);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        /* Content Area */
+        .content-area {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .content-title {
+            color: #26a69a;
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Subject Selection */
+        .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .subject-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .subject-card:hover {
+            border-color: #26a69a;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .subject-card.active {
+            background: linear-gradient(135deg, #26a69a, #4CAF50);
+            color: white;
+            border-color: #26a69a;
+        }
+
+        .subject-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: inherit;
+        }
+
+        .subject-name {
+            font-weight: 500;
+        }
+
+        /* Knowledge Editor */
+        .editor-container {
+            margin-bottom: 30px;
+        }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .editor-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-button.primary {
+            background: linear-gradient(135deg, #26a69a, #4CAF50);
+            color: white;
+        }
+
+        .action-button.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(38, 166, 154, 0.3);
+        }
+
+        .action-button.secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .action-button.secondary:hover {
+            background: #5a6268;
+        }
+
+        .action-button.danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .action-button.danger:hover {
+            background: #c82333;
+        }
+
+        .knowledge-editor {
+            width: 100%;
+            height: 300px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1em;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        .knowledge-editor:focus {
+            border-color: #26a69a;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(38, 166, 154, 0.2);
+        }
+
+        /* Homework Management */
+        .homework-list {
+            margin-top: 30px;
+        }
+
+        .homework-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .homework-item:hover {
+            border-color: #26a69a;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .homework-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .homework-subject {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            color: #26a69a;
+        }
+
+        .homework-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .homework-question {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .homework-answer {
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .homework-answer.show {
+            display: block;
+        }
+
+        .toggle-answer {
+            background: none;
+            border: none;
+            color: #26a69a;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 0;
+        }
+
+        /* Add Homework Form */
+        .add-homework-form {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            border-color: #26a69a;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(38, 166, 154, 0.2);
+        }
+
+        .form-textarea {
+            width: 100%;
+            height: 150px;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1em;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        .form-textarea:focus {
+            border-color: #26a69a;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(38, 166, 154, 0.2);
+        }
+
+        /* Messages */
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .subject-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
+            .editor-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .editor-actions {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="logo-container">
+                    <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo trường" class="logo">
+                    <div class="school-name">THCS Nguyễn Tri Phương</div>
+                </div>
+                
+                <div class="admin-info">
+                    <div class="admin-avatar">A</div>
+                    <div>
+                        <div style="font-weight: 600;">Quản trị viên</div>
+                        <div style="font-size: 0.9em; color: #666;">hmtpum002@gmail.com</div>
+                    </div>
+                    <button class="logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-title">
+                    <i class="fas fa-cogs"></i> Quản lý
+                </div>
+                
+                <ul class="sidebar-nav">
+                    <li>
+                        <a href="#" class="active" onclick="showSection('knowledge')">
+                            <i class="fas fa-book"></i> Kiến thức môn học
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="showSection('homework')">
+                            <i class="fas fa-tasks"></i> Bài tập
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="showSection('users')">
+                            <i class="fas fa-users"></i> Người dùng
+                        </a>
+                    </li>
+                    <li>
+                        <a href="chatbot.html" target="_blank">
+                            <i class="fas fa-robot"></i> Xem chatbot
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.html" target="_blank">
+                            <i class="fas fa-home"></i> Trang chủ
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Knowledge Management Section -->
+                <div id="knowledgeSection">
+                    <div class="content-title">
+                        <i class="fas fa-book"></i> Quản lý kiến thức môn học
+                    </div>
+                    
+                    <div class="message" id="knowledgeMessage"></div>
+                    
+                    <!-- Subject Selection -->
+                    <div class="subject-grid" id="subjectGrid">
+                        <!-- Subjects will be loaded here -->
+                    </div>
+                    
+                    <!-- Knowledge Editor -->
+                    <div class="editor-container">
+                        <div class="editor-header">
+                            <div class="editor-title" id="currentSubjectTitle">Chọn môn học để chỉnh sửa</div>
+                            <div class="editor-actions">
+                                <button class="action-button primary" onclick="saveKnowledge()" id="saveKnowledgeBtn">
+                                    <i class="fas fa-save"></i> Lưu kiến thức
+                                </button>
+                                <button class="action-button secondary" onclick="loadKnowledge()" id="loadKnowledgeBtn">
+                                    <i class="fas fa-sync"></i> Tải lại
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <textarea class="knowledge-editor" id="knowledgeEditor" 
+                                  placeholder="Nhập kiến thức lý thuyết cho môn học này..."></textarea>
+                        
+                        <div style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                            <i class="fas fa-info-circle"></i> Kiến thức sẽ được dùng để cung cấp cho AI khi trả lời câu hỏi
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Homework Management Section -->
+                <div id="homeworkSection" style="display: none;">
+                    <div class="content-title">
+                        <i class="fas fa-tasks"></i> Quản lý bài tập
+                    </div>
+                    
+                    <div class="message" id="homeworkMessage"></div>
+                    
+                    <!-- Add Homework Form -->
+                    <div class="add-homework-form">
+                        <div class="content-title" style="font-size: 1.2em; margin-bottom: 20px;">
+                            <i class="fas fa-plus-circle"></i> Thêm bài tập mới
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="homeworkSubject">Môn học</label>
+                            <select class="form-input" id="homeworkSubject">
+                                <option value="">Chọn môn học</option>
+                                <!-- Options will be loaded by JavaScript -->
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="homeworkQuestion">Câu hỏi/Bài tập</label>
+                            <textarea class="form-textarea" id="homeworkQuestion" 
+                                      placeholder="Nhập câu hỏi hoặc đề bài tập..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="homeworkAnswer">Đáp án/Hướng dẫn giải</label>
+                            <textarea class="form-textarea" id="homeworkAnswer" 
+                                      placeholder="Nhập đáp án hoặc hướng dẫn giải..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="homeworkDifficulty">Độ khó</label>
+                            <select class="form-input" id="homeworkDifficulty">
+                                <option value="easy">Dễ</option>
+                                <option value="medium" selected>Trung bình</option>
+                                <option value="hard">Khó</option>
+                            </select>
+                        </div>
+                        
+                        <button class="action-button primary" onclick="addHomework()" style="width: 100%;">
+                            <i class="fas fa-plus"></i> Thêm bài tập
+                        </button>
+                    </div>
+                    
+                    <!-- Homework List -->
+                    <div class="homework-list" id="homeworkList">
+                        <!-- Homework items will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Users Management Section -->
+                <div id="usersSection" style="display: none;">
+                    <div class="content-title">
+                        <i class="fas fa-users"></i> Quản lý người dùng
+                    </div>
+                    
+                    <div class="message" id="usersMessage"></div>
+                    
+                    <!-- Users Stats -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                        <div style="background: linear-gradient(135deg, #26a69a, #4CAF50); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 2em; font-weight: 600;" id="totalUsers">0</div>
+                            <div>Tổng người dùng</div>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #2196F3, #21CBF3); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 2em; font-weight: 600;" id="activeUsers">0</div>
+                            <div>Người dùng hoạt động</div>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #FF9800, #FFB74D); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 2em; font-weight: 600;" id="guestUsers">0</div>
+                            <div>Người dùng khách</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Users List -->
+                    <div id="usersList">
+                        <!-- Users will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA7eSuNHa_QXFgC-KsCeCLY5MdL90_FZsQ",
+            authDomain: "thuvienhoctap-b24ae.firebaseapp.com",
+            projectId: "thuvienhoctap-b24ae",
+            storageBucket: "thuvienhoctap-b24ae.firebasestorage.app",
+            messagingSenderId: "25688122219",
+            appId: "1:25688122219:web:6ff91267b41968a23e622e",
+            measurementId: "G-VWV9848EGD"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Admin email
+        const ADMIN_EMAIL = 'hmtpum002@gmail.com';
+
+        // App state
+        let currentSubject = null;
+        let currentKnowledge = '';
+        let homeworkItems = [];
+        let users = [];
+
+        // Subject definitions
+        const subjects = [
+            { id: 'toan-dai', name: 'Toán Đại Số', icon: 'calculator' },
+            { id: 'toan-hinh', name: 'Toán Hình Học', icon: 'shapes' },
+            { id: 'ngu-van', name: 'Ngữ Văn', icon: 'book' },
+            { id: 'khtn', name: 'Khoa Học Tự Nhiên', icon: 'atom' },
+            { id: 'lich-su-dia-ly', name: 'Lịch Sử & Địa Lý', icon: 'map' },
+            { id: 'cong-nghe', name: 'Công Nghệ', icon: 'robot' },
+            { id: 'anh-van', name: 'Anh Văn', icon: 'globe' },
+            { id: 'tin-hoc', name: 'Tin Học', icon: 'laptop-code' },
+            { id: 'gdcd', name: 'Giáo Dục Công Dân', icon: 'balance-scale' },
+            { id: 'hdtn-hn', name: 'Hoạt Động Trải Nghiệm - Hướng Nghiệp', icon: 'hands-helping' },
+            { id: 'stem', name: 'STEM', icon: 'cogs' },
+            { id: 'giao-duc-dia-phuong', name: 'Giáo Dục Địa Phương', icon: 'map-marked' }
+        ];
+
+        // DOM Elements
+        const knowledgeSection = document.getElementById('knowledgeSection');
+        const homeworkSection = document.getElementById('homeworkSection');
+        const usersSection = document.getElementById('usersSection');
+        const subjectGrid = document.getElementById('subjectGrid');
+        const knowledgeEditor = document.getElementById('knowledgeEditor');
+        const currentSubjectTitle = document.getElementById('currentSubjectTitle');
+        const saveKnowledgeBtn = document.getElementById('saveKnowledgeBtn');
+        const loadKnowledgeBtn = document.getElementById('loadKnowledgeBtn');
+        const knowledgeMessage = document.getElementById('knowledgeMessage');
+        const homeworkMessage = document.getElementById('homeworkMessage');
+        const homeworkSubject = document.getElementById('homeworkSubject');
+        const homeworkQuestion = document.getElementById('homeworkQuestion');
+        const homeworkAnswer = document.getElementById('homeworkAnswer');
+        const homeworkDifficulty = document.getElementById('homeworkDifficulty');
+        const homeworkList = document.getElementById('homeworkList');
+        const usersList = document.getElementById('usersList');
+        const totalUsers = document.getElementById('totalUsers');
+        const activeUsers = document.getElementById('activeUsers');
+        const guestUsers = document.getElementById('guestUsers');
+        const usersMessage = document.getElementById('usersMessage');
+
+        // Check admin authentication
+        function checkAdminAuth() {
+            auth.onAuthStateChanged((user) => {
+                if (!user || user.email !== ADMIN_EMAIL) {
+                    // Not admin, redirect to login
+                    window.location.href = 'auth.html';
+                }
+            });
+        }
+
+        // Show section
+        function showSection(section) {
+            // Hide all sections
+            knowledgeSection.style.display = 'none';
+            homeworkSection.style.display = 'none';
+            usersSection.style.display = 'none';
+            
+            // Remove active class from all nav items
+            document.querySelectorAll('.sidebar-nav a').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected section
+            if (section === 'knowledge') {
+                knowledgeSection.style.display = 'block';
+                document.querySelectorAll('.sidebar-nav a')[0].classList.add('active');
+                loadSubjects();
+            } else if (section === 'homework') {
+                homeworkSection.style.display = 'block';
+                document.querySelectorAll('.sidebar-nav a')[1].classList.add('active');
+                loadHomework();
+                populateHomeworkSubjects();
+            } else if (section === 'users') {
+                usersSection.style.display = 'block';
+                document.querySelectorAll('.sidebar-nav a')[2].classList.add('active');
+                loadUsers();
+            }
+        }
+
+        // Load subjects
+        function loadSubjects() {
+            subjectGrid.innerHTML = '';
+            
+            subjects.forEach(subject => {
+                const subjectCard = document.createElement('div');
+                subjectCard.className = 'subject-card';
+                subjectCard.dataset.subject = subject.id;
+                subjectCard.innerHTML = `
+                    <div class="subject-icon">
+                        <i class="fas fa-${subject.icon}"></i>
+                    </div>
+                    <div class="subject-name">${subject.name}</div>
+                `;
+                
+                subjectCard.addEventListener('click', () => {
+                    // Remove active class from all cards
+                    document.querySelectorAll('.subject-card').forEach(card => {
+                        card.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked card
+                    subjectCard.classList.add('active');
+                    
+                    // Load knowledge for this subject
+                    loadSubjectKnowledge(subject.id, subject.name);
+                });
+                
+                subjectGrid.appendChild(subjectCard);
+            });
+        }
+
+        // Load knowledge for a subject
+        async function loadSubjectKnowledge(subjectId, subjectName) {
+            currentSubject = subjectId;
+            currentSubjectTitle.textContent = `Kiến thức môn: ${subjectName}`;
+            
+            saveKnowledgeBtn.disabled = false;
+            loadKnowledgeBtn.disabled = false;
+            
+            try {
+                const docRef = db.collection('subject_knowledge').doc(subjectId);
+                const doc = await docRef.get();
+                
+                if (doc.exists) {
+                    currentKnowledge = doc.data().knowledge || '';
+                    knowledgeEditor.value = currentKnowledge;
+                } else {
+                    currentKnowledge = '';
+                    knowledgeEditor.value = '';
+                }
+                
+                showMessage(knowledgeMessage, 'Đã tải kiến thức thành công', 'success');
+            } catch (error) {
+                console.error('Lỗi khi tải kiến thức:', error);
+                showMessage(knowledgeMessage, 'Lỗi khi tải kiến thức', 'error');
+            }
+        }
+
+        // Save knowledge
+        async function saveKnowledge() {
+            if (!currentSubject) {
+                showMessage(knowledgeMessage, 'Vui lòng chọn môn học trước', 'error');
+                return;
+            }
+            
+            const newKnowledge = knowledgeEditor.value.trim();
+            
+            if (!newKnowledge) {
+                showMessage(knowledgeMessage, 'Vui lòng nhập kiến thức', 'error');
+                return;
+            }
+            
+            saveKnowledgeBtn.disabled = true;
+            saveKnowledgeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang lưu...';
+            
+            try {
+                await db.collection('subject_knowledge').doc(currentSubject).set({
+                    subject: currentSubject,
+                    knowledge: newKnowledge,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedBy: ADMIN_EMAIL
+                });
+                
+                currentKnowledge = newKnowledge;
+                showMessage(knowledgeMessage, 'Đã lưu kiến thức thành công', 'success');
+            } catch (error) {
+                console.error('Lỗi khi lưu kiến thức:', error);
+                showMessage(knowledgeMessage, 'Lỗi khi lưu kiến thức', 'error');
+            } finally {
+                saveKnowledgeBtn.disabled = false;
+                saveKnowledgeBtn.innerHTML = '<i class="fas fa-save"></i> Lưu kiến thức';
+            }
+        }
+
+        // Populate homework subjects dropdown
+        function populateHomeworkSubjects() {
+            homeworkSubject.innerHTML = '<option value="">Chọn môn học</option>';
+            
+            subjects.forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject.id;
+                option.textContent = subject.name;
+                homeworkSubject.appendChild(option);
+            });
+        }
+
+        // Load homework
+        async function loadHomework() {
+            homeworkList.innerHTML = '<div style="text-align: center; padding: 30px; color: #666;">Đang tải bài tập...</div>';
+            
+            try {
+                const snapshot = await db.collection('homework')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                homeworkItems = [];
+                snapshot.forEach(doc => {
+                    homeworkItems.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                renderHomeworkList();
+            } catch (error) {
+                console.error('Lỗi khi tải bài tập:', error);
+                homeworkList.innerHTML = '<div style="text-align: center; padding: 30px; color: #f44336;">Lỗi khi tải bài tập</div>';
+            }
+        }
+
+        // Render homework list
+        function renderHomeworkList() {
+            if (homeworkItems.length === 0) {
+                homeworkList.innerHTML = '<div style="text-align: center; padding: 30px; color: #666;">Chưa có bài tập nào</div>';
+                return;
+            }
+            
+            homeworkList.innerHTML = '';
+            
+            homeworkItems.forEach((item, index) => {
+                const subject = subjects.find(s => s.id === item.subject) || { name: item.subject, icon: 'question' };
+                
+                const homeworkItem = document.createElement('div');
+                homeworkItem.className = 'homework-item';
+                homeworkItem.innerHTML = `
+                    <div class="homework-header">
+                        <div class="homework-subject">
+                            <i class="fas fa-${subject.icon}"></i>
+                            ${subject.name}
+                            <span style="font-size: 0.9em; color: #666;">(${item.difficulty || 'medium'})</span>
+                        </div>
+                        <div class="homework-actions">
+                            <button class="action-button secondary" onclick="toggleAnswer(${index})" style="padding: 5px 10px; font-size: 0.9em;">
+                                <i class="fas fa-eye"></i> Xem đáp án
+                            </button>
+                            <button class="action-button danger" onclick="deleteHomework('${item.id}')" style="padding: 5px 10px; font-size: 0.9em;">
+                                <i class="fas fa-trash"></i> Xóa
+                            </button>
+                        </div>
+                    </div>
+                    <div class="homework-question">
+                        <strong>Câu hỏi:</strong> ${item.question}
+                    </div>
+                    <div class="homework-answer" id="answer-${index}">
+                        <strong>Đáp án:</strong> ${item.answer}
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <button class="toggle-answer" onclick="toggleAnswer(${index})">
+                            <i class="fas fa-chevron-down"></i> <span>Hiện/Ẩn đáp án</span>
+                        </button>
+                    </div>
+                `;
+                
+                homeworkList.appendChild(homeworkItem);
+            });
+        }
+
+        // Toggle answer visibility
+        function toggleAnswer(index) {
+            const answerDiv = document.getElementById(`answer-${index}`);
+            answerDiv.classList.toggle('show');
+        }
+
+        // Add homework
+        async function addHomework() {
+            const subject = homeworkSubject.value;
+            const question = homeworkQuestion.value.trim();
+            const answer = homeworkAnswer.value.trim();
+            const difficulty = homeworkDifficulty.value;
+            
+            // Validation
+            if (!subject) {
+                showMessage(homeworkMessage, 'Vui lòng chọn môn học', 'error');
+                return;
+            }
+            
+            if (!question) {
+                showMessage(homeworkMessage, 'Vui lòng nhập câu hỏi', 'error');
+                return;
+            }
+            
+            if (!answer) {
+                showMessage(homeworkMessage, 'Vui lòng nhập đáp án', 'error');
+                return;
+            }
+            
+            try {
+                await db.collection('homework').add({
+                    subject: subject,
+                    question: question,
+                    answer: answer,
+                    difficulty: difficulty,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdBy: ADMIN_EMAIL
+                });
+                
+                // Clear form
+                homeworkQuestion.value = '';
+                homeworkAnswer.value = '';
+                
+                // Reload homework list
+                loadHomework();
+                
+                showMessage(homeworkMessage, 'Đã thêm bài tập thành công', 'success');
+            } catch (error) {
+                console.error('Lỗi khi thêm bài tập:', error);
+                showMessage(homeworkMessage, 'Lỗi khi thêm bài tập', 'error');
+            }
+        }
+
+        // Delete homework
+        async function deleteHomework(homeworkId) {
+            if (!confirm('Bạn có chắc chắn muốn xóa bài tập này?')) {
+                return;
+            }
+            
+            try {
+                await db.collection('homework').doc(homeworkId).delete();
+                loadHomework();
+                showMessage(homeworkMessage, 'Đã xóa bài tập thành công', 'success');
+            } catch (error) {
+                console.error('Lỗi khi xóa bài tập:', error);
+                showMessage(homeworkMessage, 'Lỗi khi xóa bài tập', 'error');
+            }
+        }
+
+        // Load users
+        async function loadUsers() {
+            usersList.innerHTML = '<div style="text-align: center; padding: 30px; color: #666;">Đang tải danh sách người dùng...</div>';
+            
+            try {
+                const snapshot = await db.collection('users').get();
+                
+                users = [];
+                snapshot.forEach(doc => {
+                    users.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                updateUserStats();
+                renderUsersList();
+            } catch (error) {
+                console.error('Lỗi khi tải người dùng:', error);
+                usersList.innerHTML = '<div style="text-align: center; padding: 30px; color: #f44336;">Lỗi khi tải người dùng</div>';
+            }
+        }
+
+        // Update user statistics
+        function updateUserStats() {
+            const total = users.length;
+            const active = users.filter(u => u.lastLogin).length;
+            const guests = users.filter(u => u.role === 'guest').length;
+            
+            totalUsers.textContent = total;
+            activeUsers.textContent = active;
+            guestUsers.textContent = guests;
+        }
+
+        // Render users list
+        function renderUsersList() {
+            if (users.length === 0) {
+                usersList.innerHTML = '<div style="text-align: center; padding: 30px; color: #666;">Chưa có người dùng nào</div>';
+                return;
+            }
+            
+            usersList.innerHTML = '';
+            
+            users.forEach(user => {
+                const userCard = document.createElement('div');
+                userCard.className = 'homework-item';
+                userCard.innerHTML = `
+                    <div class="homework-header">
+                        <div style="font-weight: 600; color: #333;">
+                            ${user.name || 'Không có tên'}
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="background: ${user.role === 'admin' ? '#f44336' : '#4CAF50'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 0.8em;">
+                                ${user.role || 'student'}
+                            </span>
+                            <span style="font-size: 0.9em; color: #666;">
+                                ${user.email}
+                            </span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px; color: #666; font-size: 0.9em;">
+                        <div><i class="fas fa-calendar"></i> Tạo: ${formatDate(user.createdAt)}</div>
+                        ${user.lastLogin ? `<div><i class="fas fa-sign-in-alt"></i> Đăng nhập cuối: ${formatDate(user.lastLogin)}</div>` : ''}
+                    </div>
+                `;
+                
+                usersList.appendChild(userCard);
+            });
+        }
+
+        // Format date
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Chưa có';
+            
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN');
+        }
+
+        // Show message
+        function showMessage(element, text, type) {
+            element.textContent = text;
+            element.className = `message ${type}`;
+            element.style.display = 'block';
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
+        // Logout
+        function logout() {
+            auth.signOut().then(() => {
+                window.location.href = 'auth.html';
+            });
+        }
+
+        // Initialize app
+        function initializeApp() {
+            checkAdminAuth();
+            showSection('knowledge');
+        }
+
+        // Start the app
+        initializeApp();
+    </script>
+</body>
+</html>
