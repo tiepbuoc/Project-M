@@ -9,9 +9,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
     <script type="importmap">
         {
             "imports": {
@@ -31,34 +28,43 @@
         body {
             font-family: 'Quicksand', sans-serif;
             background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
-            min-height: 100vh;
+            height: 100%;
             display: flex;
             flex-direction: column;
+        }
+
+        html {
+            height: 100%;
         }
 
         .container {
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            height: 100%;
             width: 100%;
             padding: 0;
         }
 
-        /* Header - ĐỒNG BỘ VỚI INDEX */
+        /* Header - GIỐNG HỆT INDEX */
         .header {
             background-color: rgba(255, 255, 255, 0.95);
             box-shadow: 0 2px 15px rgba(0,0,0,0.1);
             backdrop-filter: blur(10px);
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #e0e0e0;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            z-index: 100;
+            z-index: 1000;
+            padding: 15px 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .logo-container {
@@ -69,31 +75,47 @@
         }
 
         .logo {
-            height: 40px;
+            height: 50px;
             border-radius: 8px;
         }
 
         .school-name {
-            font-size: 1.2em;
+            font-size: 1.3em;
             font-weight: 700;
             color: #26a69a;
         }
 
         .web-name {
-            font-size: 1em;
+            font-size: 1.1em;
             font-weight: 600;
             color: #666;
+            margin-left: 10px;
         }
 
-        .user-info {
+        /* User Info Section - GIỐNG INDEX */
+        .user-section {
             display: flex;
             align-items: center;
             gap: 15px;
         }
 
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 15px;
+            background: #f8f9fa;
+            border-radius: 25px;
+            transition: all 0.3s;
+        }
+
+        .user-info:hover {
+            background: #e9ecef;
+        }
+
         .user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             background: linear-gradient(135deg, #26a69a, #4CAF50);
             display: flex;
@@ -101,28 +123,42 @@
             justify-content: center;
             color: white;
             font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
         }
 
         .user-name {
-            font-weight: 500;
+            font-weight: 600;
             color: #333;
+            font-size: 0.9em;
+        }
+
+        .user-email {
+            font-size: 0.8em;
+            color: #666;
         }
 
         .logout-btn {
-            background: #f5f5f5;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px 20px;
+            border-radius: 25px;
             color: #666;
             cursor: pointer;
             transition: all 0.3s;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 0.9em;
+            font-weight: 600;
         }
 
         .logout-btn:hover {
-            background: #e0e0e0;
+            background: #e9ecef;
             color: #333;
         }
 
@@ -132,8 +168,8 @@
             flex: 1;
             overflow: hidden;
             position: relative;
-            margin-top: 70px;
-            height: calc(100vh - 70px);
+            margin-top: 80px;
+            height: calc(100% - 80px);
         }
 
         /* Sidebar */
@@ -152,7 +188,7 @@
         .sidebar-toggle {
             display: none;
             position: fixed;
-            top: 85px;
+            top: 90px;
             left: 20px;
             background: linear-gradient(135deg, #4CAF50, #2E7D32);
             color: white;
@@ -286,7 +322,7 @@
             overflow-wrap: break-word;
         }
 
-        /* Markdown Styling - FIXED */
+        /* Markdown Styling - FIXED hoàn toàn */
         .message-content strong {
             font-weight: 700;
         }
@@ -350,6 +386,12 @@
             font-style: italic;
         }
 
+        .message-content hr {
+            border: none;
+            border-top: 2px solid #e0e0e0;
+            margin: 16px 0;
+        }
+
         .message-content table {
             border-collapse: collapse;
             margin: 12px 0;
@@ -369,30 +411,19 @@
             font-weight: 600;
         }
 
-        /* Katex Styling - FIXED */
-        .katex {
-            font-size: 1.05em !important;
-            font-family: 'KaTeX_Main', 'Times New Roman', serif !important;
+        /* LaTeX Styling - FIXED */
+        .message-content .math-inline {
+            font-family: "KaTeX_Main", "Times New Roman", serif;
+            font-size: 1.05em;
         }
 
-        .katex-display {
-            overflow: auto hidden;
-            padding: 8px 0;
+        .message-content .math-display {
+            font-family: "KaTeX_Main", "Times New Roman", serif;
+            font-size: 1.1em;
+            text-align: center;
             margin: 12px 0;
-        }
-
-        .katex-display > .katex {
-            max-width: 100%;
             overflow-x: auto;
             overflow-y: hidden;
-        }
-
-        .message-content .katex-error {
-            color: #d32f2f;
-            background: #ffebee;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.9em;
         }
 
         .message-time {
@@ -566,13 +597,13 @@
         /* Responsive */
         @media (max-width: 768px) {
             .container {
-                height: 100vh;
+                height: 100%;
             }
             
             .main-content {
                 flex-direction: row;
-                margin-top: 70px;
-                height: calc(100vh - 70px);
+                margin-top: 80px;
+                height: calc(100% - 80px);
             }
             
             .sidebar-toggle {
@@ -582,8 +613,8 @@
             .sidebar {
                 position: fixed;
                 left: 0;
-                top: 70px;
-                height: calc(100vh - 70px);
+                top: 80px;
+                height: calc(100% - 80px);
                 z-index: 100;
                 transform: translateX(-100%);
                 box-shadow: 2px 0 10px rgba(0,0,0,0.1);
@@ -596,10 +627,10 @@
             .sidebar-overlay {
                 display: none;
                 position: fixed;
-                top: 70px;
+                top: 80px;
                 left: 0;
                 width: 100%;
-                height: calc(100vh - 70px);
+                height: calc(100% - 80px);
                 background: rgba(0,0,0,0.5);
                 z-index: 99;
             }
@@ -650,14 +681,38 @@
                 display: none;
             }
             
-            .user-info .user-name {
+            .user-details {
                 display: none;
+            }
+            
+            .logout-btn span {
+                display: none;
+            }
+            
+            .nav-container {
+                padding: 0 15px;
+            }
+            
+            .logo {
+                height: 40px;
+            }
+            
+            .school-name {
+                font-size: 1em;
             }
         }
 
         @media (max-width: 480px) {
+            .nav-container {
+                padding: 0 10px;
+            }
+            
+            .logo {
+                height: 35px;
+            }
+            
             .school-name {
-                font-size: 1em;
+                font-size: 0.9em;
             }
             
             .sidebar-title {
@@ -668,55 +723,46 @@
                 font-size: 0.85em;
             }
             
-            .header {
-                padding: 12px 15px;
-            }
-            
-            .logo {
-                height: 35px;
-            }
-            
             .main-content {
-                margin-top: 65px;
-                height: calc(100vh - 65px);
+                margin-top: 75px;
+                height: calc(100% - 75px);
             }
             
             .sidebar {
-                top: 65px;
-                height: calc(100vh - 65px);
+                top: 75px;
+                height: calc(100% - 75px);
             }
             
             .sidebar-overlay {
-                top: 65px;
-                height: calc(100vh - 65px);
+                top: 75px;
+                height: calc(100% - 75px);
             }
             
             .sidebar-toggle {
-                top: 75px;
+                top: 85px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header ĐỒNG BỘ -->
-    <div class="header">
-        <div class="logo-container" onclick="goToIndex()">
-            <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo trường" class="logo">
-            <div>
-                <div class="school-name">THCS Nguyễn Tri Phương</div>
-                <div class="web-name">Hệ thống học tập AI</div>
+    <!-- Header GIỐNG HỆT INDEX -->
+    <header class="header">
+        <div class="nav-container">
+            <!-- Logo và tên web -->
+            <div class="logo-container" onclick="goToIndex()">
+                <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo trường THCS Nguyễn Tri Phương" class="logo">
+                <div>
+                    <div class="school-name">THCS Nguyễn Tri Phương</div>
+                    <div class="web-name">Hệ thống học tập AI</div>
+                </div>
+            </div>
+            
+            <!-- Thông tin người dùng -->
+            <div class="user-section" id="userSection">
+                <!-- Sẽ được cập nhật bằng JavaScript -->
             </div>
         </div>
-        
-        <div class="user-info">
-            <div class="user-avatar" id="userAvatar">K</div>
-            <div class="user-name" id="userName">Khách</div>
-            <button class="logout-btn" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Đăng xuất</span>
-            </button>
-        </div>
-    </div>
+    </header>
     
     <!-- Main Content -->
     <div class="main-content">
@@ -862,6 +908,7 @@
         }
 
         // DOM Elements
+        const userSection = document.getElementById('userSection');
         const userAvatar = document.getElementById('userAvatar');
         const userName = document.getElementById('userName');
         const subjectInfo = document.getElementById('subjectInfo');
@@ -883,19 +930,19 @@
         let subjectKnowledge = {};
         let homeworkData = {};
         let chatHistory = [];
-        let isProcessing = false; // Flag to prevent duplicate messages
+        let isProcessing = false;
 
         // Subject definitions
         const subjects = {
             'toan-dai': { 
                 name: 'Toán Đại Số', 
                 icon: 'calculator',
-                systemPrompt: "Bạn là giáo viên Toán Đại Số THCS. Hướng dẫn chi tiết, giải thích từng bước. Luôn kiểm tra kết quả."
+                systemPrompt: "Bạn là giáo viên Toán Đại Số THCS. Hướng dẫn chi tiết, giải thích từng bước. Luôn kiểm tra kết quả. Sử dụng LaTeX cho công thức toán: $công_thức$ cho inline và $$công_thức$$ cho display."
             },
             'toan-hinh': { 
                 name: 'Toán Hình Học', 
                 icon: 'shapes',
-                systemPrompt: "Bạn là giáo viên Toán Hình Học THCS. Mô tả hình vẽ chi tiết bằng lời. Giải thích các định lý, công thức."
+                systemPrompt: "Bạn là giáo viên Toán Hình Học THCS. Mô tả hình vẽ chi tiết bằng lời. Giải thích các định lý, công thức. Sử dụng LaTeX cho công thức toán."
             },
             'ngu-van': { 
                 name: 'Ngữ Văn', 
@@ -905,7 +952,7 @@
             'khtn': { 
                 name: 'Khoa Học Tự Nhiên', 
                 icon: 'atom',
-                systemPrompt: "Bạn là giáo viên KHTN THCS. Giải thích hiện tượng khoa học. Sử dụng tên tiếng Anh cho nguyên tố hóa học."
+                systemPrompt: "Bạn là giáo viên KHTN THCS. Giải thích hiện tượng khoa học. Sử dụng tên tiếng Anh cho nguyên tố hóa học. Sử dụng LaTeX cho công thức hóa học."
             },
             'lich-su-dia-ly': { 
                 name: 'Lịch Sử & Địa Lý', 
@@ -940,7 +987,7 @@
             'stem': { 
                 name: 'STEM', 
                 icon: 'cogs',
-                systemPrompt: "Bạn là giáo viên STEM THCS. Tích hợp Khoa học, Công nghệ, Kỹ thuật và Toán học. Hướng dẫn dự án thực hành."
+                systemPrompt: "Bạn là giáo viên STEM THCS. Tích hợp Khoa học, Công nghệ, Kỹ thuật và Toán học. Hướng dẫn dự án thực hành. Sử dụng LaTeX cho công thức."
             }
         };
 
@@ -951,8 +998,23 @@
             if (userData.uid && !userData.isGuest) {
                 // User is logged in
                 currentUser = userData;
-                userName.textContent = userData.displayName || 'Người dùng';
-                userAvatar.textContent = (userData.displayName || 'U').charAt(0).toUpperCase();
+                const displayName = userData.displayName || 'Người dùng';
+                const email = userData.email || '';
+                const firstLetter = displayName.charAt(0).toUpperCase();
+                
+                userSection.innerHTML = `
+                    <div class="user-info">
+                        <div class="user-avatar">${firstLetter}</div>
+                        <div class="user-details">
+                            <div class="user-name">${displayName}</div>
+                            ${email ? `<div class="user-email">${email}</div>` : ''}
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Đăng xuất</span>
+                    </button>
+                `;
             } else {
                 // Guest user
                 currentUser = {
@@ -960,11 +1022,15 @@
                     displayName: 'Khách',
                     isGuest: true
                 };
-                userName.textContent = 'Khách';
-                userAvatar.textContent = 'K';
+                userSection.innerHTML = `
+                    <a href="auth.html" class="logout-btn" style="text-decoration: none;">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Đăng nhập</span>
+                    </a>
+                `;
             }
             
-            // Load chat history from sessionStorage instead of localStorage
+            // Load chat history from sessionStorage
             const savedHistory = sessionStorage.getItem(`chatHistory_${currentUser.uid}_${currentSubject}`);
             if (savedHistory) {
                 try {
@@ -986,20 +1052,12 @@
             }
         }
 
-        // Clear chat history
-        function clearChatHistory() {
-            chatHistory = [];
-            sessionStorage.removeItem(`chatHistory_${currentUser.uid}_${currentSubject}`);
-            messagesContainer.innerHTML = '';
-        }
-
         // Display chat history
         function displayChatHistory() {
             messagesContainer.innerHTML = '';
             chatHistory.forEach(item => {
                 addMessageToDisplay(item.role, item.text, item.files || []);
             });
-            renderMathInMessages();
         }
 
         // Load subject knowledge from Firestore
@@ -1094,53 +1152,74 @@
             }
         }
 
-        // Process text for markdown - FIXED VERSION
+        // Process text for markdown và LaTeX - FIXED HOÀN TOÀN
         function processMarkdown(text) {
             if (!text) return '';
             
-            // First, escape HTML tags
+            // Escape HTML trước
             let processedText = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
             
-            // Process code blocks first (to prevent other markdown inside)
+            // Xử lý code blocks (```code```)
             processedText = processedText.replace(/```([\s\S]*?)```/g, function(match, code) {
-                return `<pre><code>${code.trim()}</code></pre>`;
+                return `<pre><code>${code.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
             });
             
-            // Process inline code
+            // Xử lý inline code (`code`)
             processedText = processedText.replace(/`([^`]+)`/g, '<code>$1</code>');
             
-            // Process bold
+            // Xử lý bold (**text**)
             processedText = processedText.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
             processedText = processedText.replace(/__([^_]+)__/g, '<strong>$1</strong>');
             
-            // Process italic
+            // Xử lý italic (*text*)
             processedText = processedText.replace(/\*([^*]+)\*/g, '<em>$1</em>');
             processedText = processedText.replace(/_([^_]+)_/g, '<em>$1</em>');
             
-            // Process headers
+            // Xử lý headers (# Header)
             processedText = processedText.replace(/^### (.*$)/gm, '<h3>$1</h3>');
             processedText = processedText.replace(/^## (.*$)/gm, '<h2>$1</h2>');
             processedText = processedText.replace(/^# (.*$)/gm, '<h1>$1</h1>');
             
-            // Process lists
+            // Xử lý unordered lists (- item)
             processedText = processedText.replace(/^\s*[-*+] (.*$)/gm, '<li>$1</li>');
+            
+            // Xử lý ordered lists (1. item)
             processedText = processedText.replace(/^\s*\d+\. (.*$)/gm, '<li>$1</li>');
             
-            // Wrap consecutive list items in ul/ol
+            // Wrap lists
             processedText = processedText.replace(/(<li>.*<\/li>\n?)+/g, function(match) {
-                return '<ul>' + match + '</ul>';
+                if (match.includes('1.')) {
+                    return '<ol>' + match + '</ol>';
+                } else {
+                    return '<ul>' + match + '</ul>';
+                }
             });
             
-            // Process blockquotes
+            // Xử lý blockquotes (> text)
             processedText = processedText.replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>');
             
-            // Process line breaks
+            // Xử lý horizontal rules (---)
+            processedText = processedText.replace(/^---$/gm, '<hr>');
+            processedText = processedText.replace(/^\*\*\*$/gm, '<hr>');
+            processedText = processedText.replace(/^___$/gm, '<hr>');
+            
+            // Xử lý LaTeX inline math ($...$)
+            processedText = processedText.replace(/\$([^$]+)\$/g, function(match, math) {
+                return `<span class="math-inline">${math}</span>`;
+            });
+            
+            // Xử lý LaTeX display math ($$...$$)
+            processedText = processedText.replace(/\$\$([^$]+)\$\$/g, function(match, math) {
+                return `<div class="math-display">${math}</div>`;
+            });
+            
+            // Xử lý line breaks
             processedText = processedText.replace(/\n/g, '<br>');
             
             return processedText;
         }
 
-        // Add message to display với định dạng markdown đã sửa
+        // Add message to display với markdown đã xử lý
         function addMessageToDisplay(sender, text, files = []) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}-message`;
@@ -1176,12 +1255,12 @@
                 fileHtml += '</div>';
             }
             
-            // Process text for markdown
+            // Process text for markdown và LaTeX
             let htmlContent = '';
             if (sender === 'bot') {
                 htmlContent = processMarkdown(text);
             } else {
-                htmlContent = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                htmlContent = text.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
             }
             
             messageDiv.innerHTML = `
@@ -1191,60 +1270,20 @@
             
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            
-            // Render LaTeX trong tin nhắn bot
-            if (sender === 'bot') {
-                renderMathInElement(messageDiv.querySelector('.message-content'));
-            }
         }
 
-        // Render LaTeX trong một element - FIXED VERSION
-        function renderMathInElement(element) {
-            if (!element) return;
-            
-            try {
-                renderMathInElement(element, {
-                    delimiters: [
-                        {left: '$$', right: '$$', display: true},
-                        {left: '$', right: '$', display: false},
-                        {left: '\\(', right: '\\)', display: false},
-                        {left: '\\[', right: '\\]', display: true}
-                    ],
-                    throwOnError: false,
-                    errorColor: '#d32f2f',
-                    macros: {
-                        "\\RR": "\\mathbb{R}",
-                        "\\NN": "\\mathbb{N}",
-                        "\\ZZ": "\\mathbb{Z}",
-                        "\\QQ": "\\mathbb{Q}",
-                        "\\CC": "\\mathbb{C}"
-                    }
-                });
-            } catch (error) {
-                console.error('Lỗi render LaTeX:', error);
-            }
-        }
-
-        // Render LaTeX trong tất cả tin nhắn
-        function renderMathInMessages() {
-            const elements = messagesContainer.querySelectorAll('.bot-message .message-content');
-            elements.forEach(element => {
-                renderMathInElement(element);
-            });
-        }
-
-        // Add message và lưu vào history (chỉ lưu vào sessionStorage)
+        // Add message và lưu vào history
         function addMessage(sender, text, files = []) {
             addMessageToDisplay(sender, text, files);
             
-            // Lưu vào history (chỉ lưu tin nhắn, không lưu file để tránh lỗi)
+            // Lưu vào history
             chatHistory.push({
                 role: sender,
                 text: text,
                 timestamp: new Date().toISOString()
             });
             
-            // Giới hạn lịch sử chat để tránh quá lớn
+            // Giới hạn lịch sử chat
             if (chatHistory.length > 50) {
                 chatHistory = chatHistory.slice(-50);
             }
@@ -1392,7 +1431,7 @@
             const notification = document.createElement('div');
             notification.style.cssText = `
                 position: fixed;
-                top: 80px;
+                top: 85px;
                 right: 20px;
                 padding: 12px 18px;
                 background: ${type === 'error' ? '#f44336' : type === 'warning' ? '#ff9800' : '#4CAF50'};
@@ -1436,13 +1475,22 @@
             }
         }
 
-        // Prepare prompt for Gemini
+        // Prepare prompt for Gemini với yêu cầu markdown và LaTeX rõ ràng
         function preparePrompt(userText, files = []) {
             const subject = subjects[currentSubject];
             let prompt = `Bạn là một giáo viên AI thân thiện, hỗ trợ học sinh THCS trường Nguyễn Tri Phương.
 Xưng hô: thầy/cô với học sinh là em.
 Chuyên môn: ${subject.name} theo chương trình giáo dục mới THCS Việt Nam.
-Yêu cầu: Trả lời bằng markdown với định dạng rõ ràng, dễ hiểu. Sử dụng **bold** cho tiêu đề quan trọng, *italic* cho nhấn mạnh, và $LaTeX$ cho công thức toán học.
+
+**QUAN TRỌNG:** Sử dụng markdown để định dạng câu trả lời:
+1. Tiêu đề: #, ##, ###
+2. In đậm: **văn bản**
+3. In nghiêng: *văn bản*
+4. Danh sách: - item hoặc 1. item
+5. Đường kẻ ngang: ---
+6. Code: \`code\` hoặc \`\`\`code block\`\`\`
+7. Công thức toán: $công_thức$ (inline) hoặc $$công_thức$$ (display)
+
 Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư duy.\n\n`;
 
             // Thêm prompt đặc biệt cho môn học
@@ -1476,7 +1524,7 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
                 prompt += `\nNếu là file bài tập/ảnh bài giải, hãy phân tích và hướng dẫn chi tiết bằng markdown.\n`;
             }
 
-            prompt += `Hãy trả lời một cách hữu ích và khích lệ bằng markdown, sử dụng LaTeX cho công thức toán!`;
+            prompt += `Hãy trả lời một cách hữu ích và khích lệ bằng markdown đầy đủ!`;
 
             return prompt;
         }
@@ -1529,7 +1577,7 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
             return textInfo;
         }
 
-        // Send message - FIXED VERSION (không hiển thị lỗi khi đã trả lời thành công)
+        // Send message - FIXED không hiển thị lỗi khi thành công
         async function sendMessage() {
             if (isProcessing) return;
             
@@ -1577,7 +1625,7 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
                 
                 // Check if Gemini is available
                 if (!model) {
-                    throw new Error('AI chưa sẵn sàng. Vui lòng thử lại sau.');
+                    throw new Error('AI chưa sẵn sàng');
                 }
                 
                 // Prepare content for Gemini
@@ -1594,37 +1642,13 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
                 let result;
                 try {
                     if (fileContents.length > 0) {
-                        // Send with images
                         result = await model.generateContent([finalPrompt, ...fileContents]);
                     } else {
-                        // Send text only
                         result = await model.generateContent(finalPrompt);
                     }
                 } catch (apiError) {
                     console.error('Lỗi API Gemini:', apiError);
-                    
-                    // Fallback
-                    if (apiError.message?.includes('404') || apiError.status === 404) {
-                        try {
-                            const fallbackModel = genAI.getGenerativeModel({ 
-                                model: "gemini-pro",
-                                generationConfig: {
-                                    temperature: 0.7,
-                                    maxOutputTokens: 2048,
-                                }
-                            });
-                            
-                            if (fileContents.length > 0) {
-                                result = await fallbackModel.generateContent([finalPrompt, ...fileContents]);
-                            } else {
-                                result = await fallbackModel.generateContent(finalPrompt);
-                            }
-                        } catch (fallbackError) {
-                            throw new Error('Không thể kết nối đến AI. Vui lòng kiểm tra kết nối mạng.');
-                        }
-                    } else {
-                        throw apiError;
-                    }
+                    throw new Error('Lỗi kết nối AI');
                 }
                 
                 const response = await result.response;
@@ -1636,19 +1660,8 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
                 console.error('Lỗi khi gửi tin nhắn:', error);
                 
                 // Chỉ hiển thị lỗi nếu thực sự có lỗi
-                let errorMessage = 'Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau.';
-                
-                if (error.message.includes('mạng')) {
-                    errorMessage = 'Lỗi kết nối mạng. Vui lòng kiểm tra kết nối internet.';
-                } else if (error.message.includes('API')) {
-                    errorMessage = 'Tạm thời không thể kết nối đến AI. Vui lòng thử lại sau vài phút.';
-                } else if (error.message.includes('sẵn sàng')) {
-                    errorMessage = 'AI đang được cập nhật. Vui lòng thử lại sau.';
-                }
-                
-                // Chỉ hiển thị lỗi nếu thực sự cần
                 if (!error.message.includes('AI chưa sẵn sàng')) {
-                    addMessage('bot', errorMessage);
+                    addMessage('bot', 'Xin lỗi, tạm thời không thể kết nối đến AI. Vui lòng thử lại sau.');
                     showNotification('Có lỗi xảy ra khi xử lý yêu cầu', 'error');
                 }
             }
@@ -1684,16 +1697,14 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
 
         // Go to index
         function goToIndex() {
-            // Không lưu lịch sử khi chuyển trang
             window.location.href = 'index.html';
         }
 
         // Logout
         function logout() {
-            // Không lưu lịch sử khi đăng xuất
             auth.signOut().then(() => {
                 localStorage.removeItem('user');
-                // Xóa tất cả lịch sử chat trong sessionStorage
+                // Xóa tất cả lịch sử chat
                 Object.keys(sessionStorage).forEach(key => {
                     if (key.startsWith('chatHistory_')) {
                         sessionStorage.removeItem(key);
@@ -1708,7 +1719,6 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
 
         // Clear chat history on page unload
         window.addEventListener('beforeunload', function() {
-            // Xóa lịch sử chat khi đóng/refresh trang
             Object.keys(sessionStorage).forEach(key => {
                 if (key.startsWith('chatHistory_')) {
                     sessionStorage.removeItem(key);
@@ -1760,10 +1770,7 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
             // Auto-hide sidebar on desktop when resizing to mobile
             window.addEventListener('resize', function() {
                 if (window.innerWidth > 768) {
-                    sidebar.classList.remove('show');
-                    sidebarOverlay.classList.remove('show');
-                    sidebarToggleIcon.classList.remove('fa-times');
-                    sidebarToggleIcon.classList.add('fa-bars');
+                    hideSidebar();
                 }
             });
             
