@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatbot AI học tập - THCS Nguyễn Tri Phương</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -32,25 +36,29 @@
             flex-direction: column;
         }
 
-        .container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0;
-        }
-
-        /* Header */
+        /* Header đồng bộ với index */
         .header {
-            background-color: rgba(255, 255, 255, 0.95);
+            background-color: rgba(255, 255, 255, 0.98);
             box-shadow: 0 2px 15px rgba(0,0,0,0.1);
             backdrop-filter: blur(10px);
-            padding: 15px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 15px 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .nav-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #e0e0e0;
         }
 
         .logo-container {
@@ -70,15 +78,36 @@
             color: #26a69a;
         }
 
+        .web-name {
+            font-size: 1em;
+            font-weight: 600;
+            color: #666;
+            margin-left: 10px;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
         .user-info {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
+            padding: 8px 15px;
+            background: #f8f9fa;
+            border-radius: 25px;
+            transition: all 0.3s;
+        }
+
+        .user-info:hover {
+            background: #e9ecef;
         }
 
         .user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             background: linear-gradient(135deg, #26a69a, #4CAF50);
             display: flex;
@@ -86,28 +115,58 @@
             justify-content: center;
             color: white;
             font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
         }
 
         .user-name {
-            font-weight: 500;
+            font-weight: 600;
             color: #333;
+            font-size: 0.9em;
         }
 
-        .logout-btn {
-            background: #f5f5f5;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            color: #666;
-            cursor: pointer;
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .auth-btn {
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
             transition: all 0.3s;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 0.9em;
+            border: none;
+            cursor: pointer;
+        }
+
+        .home-btn {
+            background: linear-gradient(45deg, #26a69a, #4CAF50);
+            color: white;
+            box-shadow: 0 4px 15px rgba(38, 166, 154, 0.3);
+        }
+
+        .home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(38, 166, 154, 0.4);
+        }
+
+        .logout-btn {
+            background: #f8f9fa;
+            color: #666;
+            border: 1px solid #dee2e6;
         }
 
         .logout-btn:hover {
-            background: #e0e0e0;
+            background: #e9ecef;
             color: #333;
         }
 
@@ -115,7 +174,8 @@
         .main-content {
             display: flex;
             flex: 1;
-            overflow: hidden;
+            margin-top: 80px;
+            height: calc(100vh - 80px);
         }
 
         /* Sidebar */
@@ -125,12 +185,29 @@
             border-right: 1px solid #dce775;
             display: flex;
             flex-direction: column;
-            padding: 20px;
             overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            top: 85px;
+            left: 10px;
+            z-index: 999;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
         .sidebar-section {
             margin-bottom: 30px;
+            padding: 20px;
         }
 
         .sidebar-title {
@@ -243,6 +320,76 @@
             background: linear-gradient(145deg, #e3f2fd, #bbdefb);
             color: #212121;
             border-bottom-left-radius: 5px;
+        }
+
+        /* Định dạng nội dung Markdown và LaTeX */
+        .bot-message .message-content h1,
+        .bot-message .message-content h2,
+        .bot-message .message-content h3,
+        .bot-message .message-content h4 {
+            color: #333;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 5px;
+        }
+
+        .bot-message .message-content strong {
+            color: #e65100;
+            font-weight: 600;
+        }
+
+        .bot-message .message-content em {
+            color: #388E3C;
+            font-style: italic;
+        }
+
+        .bot-message .message-content code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #D32F2F;
+        }
+
+        .bot-message .message-content pre {
+            background: #263238;
+            color: #ECEFF1;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        .bot-message .message-content ul,
+        .bot-message .message-content ol {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+
+        .bot-message .message-content li {
+            margin-bottom: 5px;
+        }
+
+        .bot-message .message-content blockquote {
+            border-left: 4px solid #4CAF50;
+            padding-left: 15px;
+            margin: 10px 0;
+            color: #666;
+            font-style: italic;
+        }
+
+        .katex-display {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 10px 0;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .katex {
+            font-size: 1.1em !important;
         }
 
         .message-time {
@@ -415,60 +562,80 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .container {
-                height: 100vh;
-            }
-            
-            .main-content {
-                flex-direction: column;
-            }
-            
             .sidebar {
-                width: 100%;
-                flex-direction: row;
+                position: fixed;
+                left: 0;
+                top: 80px;
+                height: calc(100vh - 80px);
+                transform: translateX(-100%);
+                z-index: 100;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .sidebar-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .nav-container {
                 flex-wrap: wrap;
-                gap: 10px;
-                padding: 15px;
-                max-height: 150px;
-                overflow-x: auto;
             }
-            
-            .sidebar-section {
-                margin-bottom: 15px;
-                min-width: 200px;
+
+            .user-section {
+                order: 2;
+                width: 100%;
+                justify-content: center;
+                margin-top: 10px;
             }
-            
-            .subject-button {
-                padding: 10px;
-                font-size: 0.9em;
+
+            .auth-buttons {
+                width: 100%;
+                justify-content: center;
             }
-            
+
             .chat-header {
                 padding: 15px;
             }
-            
+
             .chat-header h2 {
                 font-size: 1.2em;
             }
-            
+
             .messages-container {
                 padding: 15px;
             }
-            
+
             .message {
                 max-width: 90%;
             }
-            
+
             .input-area {
                 padding: 15px;
             }
-            
+
             .file-button, .send-button {
                 width: 45px;
                 height: 45px;
             }
-            
-            .user-info .user-name {
+
+            .user-details {
+                display: none;
+            }
+
+            .web-name {
+                display: none;
+            }
+
+            .logout-btn span {
+                display: none;
+            }
+
+            .home-btn span {
                 display: none;
             }
         }
@@ -477,128 +644,140 @@
             .school-name {
                 font-size: 1em;
             }
-            
-            .sidebar-title {
-                font-size: 1em;
+
+            .sidebar-toggle {
+                top: 85px;
+                left: 5px;
             }
-            
+
+            .sidebar-section {
+                padding: 15px;
+            }
+
             .subject-button {
                 font-size: 0.8em;
+                padding: 10px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="logo-container">
-                <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo trường" class="logo">
-                <div class="school-name">THCS Nguyễn Tri Phương</div>
+    <!-- Header đồng bộ -->
+    <header class="header">
+        <div class="container">
+            <div class="nav-container">
+                <div class="logo-container">
+                    <img src="./Ứng dụng và trợ lý ảo trí tuệ nhân tạo học tập trong trường THCS_files/20240918-01.png" alt="Logo trường" class="logo">
+                    <div>
+                        <div class="school-name">THCS Nguyễn Tri Phương</div>
+                        <div class="web-name">Hệ thống học tập AI</div>
+                    </div>
+                </div>
+                
+                <div class="user-section" id="userSection">
+                    <!-- Sẽ được cập nhật bằng JavaScript -->
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Nút toggle sidebar (mobile) -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">
+                    <i class="fas fa-book-open"></i> Môn học
+                </div>
+                <button class="subject-button active" data-subject="toan-dai">
+                    <i class="fas fa-calculator"></i> Toán Đại Số
+                </button>
+                <button class="subject-button" data-subject="toan-hinh">
+                    <i class="fas fa-shapes"></i> Toán Hình Học
+                </button>
+                <button class="subject-button" data-subject="ngu-van">
+                    <i class="fas fa-book"></i> Ngữ Văn
+                </button>
             </div>
             
-            <div class="user-info">
-                <div class="user-avatar" id="userAvatar">K</div>
-                <div class="user-name" id="userName">Khách</div>
-                <button class="logout-btn" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+            <div class="sidebar-section">
+                <div class="sidebar-title">
+                    <i class="fas fa-flask"></i> Khoa học
+                </div>
+                <button class="subject-button" data-subject="khtn">
+                    <i class="fas fa-atom"></i> KHTN
+                </button>
+                <button class="subject-button" data-subject="lich-su-dia-ly">
+                    <i class="fas fa-map"></i> Lịch Sử & Địa Lý
+                </button>
+                <button class="subject-button" data-subject="cong-nghe">
+                    <i class="fas fa-robot"></i> Công Nghệ
+                </button>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">
+                    <i class="fas fa-language"></i> Ngôn ngữ
+                </div>
+                <button class="subject-button" data-subject="anh-van">
+                    <i class="fas fa-globe"></i> Anh Văn
+                </button>
+                <button class="subject-button" data-subject="tin-hoc">
+                    <i class="fas fa-laptop-code"></i> Tin Học
+                </button>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">
+                    <i class="fas fa-users"></i> Khác
+                </div>
+                <button class="subject-button" data-subject="gdcd">
+                    <i class="fas fa-balance-scale"></i> GDCD
+                </button>
+                <button class="subject-button" data-subject="hdtn-hn">
+                    <i class="fas fa-hands-helping"></i> HĐTN - HN
+                </button>
+                <button class="subject-button" data-subject="stem">
+                    <i class="fas fa-cogs"></i> STEM
                 </button>
             </div>
         </div>
         
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <div class="sidebar-section">
-                    <div class="sidebar-title">
-                        <i class="fas fa-book-open"></i> Môn học
-                    </div>
-                    <button class="subject-button active" data-subject="toan-dai">
-                        <i class="fas fa-calculator"></i> Toán Đại Số
-                    </button>
-                    <button class="subject-button" data-subject="toan-hinh">
-                        <i class="fas fa-shapes"></i> Toán Hình Học
-                    </button>
-                    <button class="subject-button" data-subject="ngu-van">
-                        <i class="fas fa-book"></i> Ngữ Văn
-                    </button>
-                </div>
-                
-                <div class="sidebar-section">
-                    <div class="sidebar-title">
-                        <i class="fas fa-flask"></i> Khoa học
-                    </div>
-                    <button class="subject-button" data-subject="khtn">
-                        <i class="fas fa-atom"></i> KHTN
-                    </button>
-                    <button class="subject-button" data-subject="lich-su-dia-ly">
-                        <i class="fas fa-map"></i> Lịch Sử & Địa Lý
-                    </button>
-                    <button class="subject-button" data-subject="cong-nghe">
-                        <i class="fas fa-robot"></i> Công Nghệ
-                    </button>
-                </div>
-                
-                <div class="sidebar-section">
-                    <div class="sidebar-title">
-                        <i class="fas fa-language"></i> Ngôn ngữ
-                    </div>
-                    <button class="subject-button" data-subject="anh-van">
-                        <i class="fas fa-globe"></i> Anh Văn
-                    </button>
-                    <button class="subject-button" data-subject="tin-hoc">
-                        <i class="fas fa-laptop-code"></i> Tin Học
-                    </button>
-                </div>
-                
-                <div class="sidebar-section">
-                    <div class="sidebar-title">
-                        <i class="fas fa-users"></i> Khác
-                    </div>
-                    <button class="subject-button" data-subject="gdcd">
-                        <i class="fas fa-balance-scale"></i> GDCD
-                    </button>
-                    <button class="subject-button" data-subject="hdtn-hn">
-                        <i class="fas fa-hands-helping"></i> HĐTN - HN
-                    </button>
-                    <button class="subject-button" data-subject="stem">
-                        <i class="fas fa-cogs"></i> STEM
-                    </button>
+        <!-- Chat Area -->
+        <div class="chat-area">
+            <div class="chat-header">
+                <h2><i class="fas fa-robot"></i> Chatbot AI học tập</h2>
+                <div class="chat-header-info" id="subjectInfo">
+                    Chào em! Thầy/cô sẵn sàng hỗ trợ em học môn <strong>Toán Đại Số</strong>. 
+                    Em có thể hỏi bài, gửi file hoặc yêu cầu bài tập.
                 </div>
             </div>
             
-            <!-- Chat Area -->
-            <div class="chat-area">
-                <div class="chat-header">
-                    <h2><i class="fas fa-robot"></i> Chatbot AI học tập</h2>
-                    <div class="chat-header-info" id="subjectInfo">
-                        Chào em! Thầy/cô sẵn sàng hỗ trợ em học môn <strong>Toán Đại Số</strong>. 
-                        Em có thể hỏi bài, gửi file hoặc yêu cầu bài tập.
-                    </div>
-                </div>
+            <div class="messages-container" id="messagesContainer">
+                <!-- Messages will be loaded here -->
+            </div>
+            
+            <!-- Attachment Preview -->
+            <div class="attachment-preview" id="attachmentPreview"></div>
+            
+            <!-- Input Area -->
+            <div class="input-area">
+                <input type="file" id="fileInput" class="file-input" multiple accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.txt,.ppt,.pptx">
+                <button class="file-button" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-paperclip"></i>
+                </button>
                 
-                <div class="messages-container" id="messagesContainer">
-                    <!-- Messages will be loaded here -->
-                </div>
+                <input type="text" class="message-input" id="messageInput" 
+                       placeholder="Hỏi thầy/cô điều gì đó..." autocomplete="off">
                 
-                <!-- Attachment Preview -->
-                <div class="attachment-preview" id="attachmentPreview"></div>
-                
-                <!-- Input Area -->
-                <div class="input-area">
-                    <input type="file" id="fileInput" class="file-input" multiple accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.txt,.ppt,.pptx">
-                    <button class="file-button" onclick="document.getElementById('fileInput').click()">
-                        <i class="fas fa-paperclip"></i>
-                    </button>
-                    
-                    <input type="text" class="message-input" id="messageInput" 
-                           placeholder="Hỏi thầy/cô điều gì đó..." autocomplete="off">
-                    
-                    <button class="send-button" id="sendButton" onclick="sendMessage()">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
+                <button class="send-button" id="sendButton" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -622,14 +801,12 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Initialize Gemini AI - SỬA LỖI 404: Dùng đúng model và API key
+        // Initialize Gemini AI
         const GEMINI_API_KEY = "I2KvIpFfUmO_NoGghLU9ZXp-_sDB4xftCySazIA".split("").reverse().join("");
         
-        // Sử dụng model mặc định nếu gặp lỗi
         let genAI, model;
         try {
             genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-            // Thử model mới nhất
             model = genAI.getGenerativeModel({ 
                 model: "gemini-2.5-flash",
                 generationConfig: {
@@ -641,13 +818,13 @@
             });
         } catch (error) {
             console.error("Lỗi khởi tạo Gemini:", error);
-            // Fallback nếu có lỗi
             model = null;
         }
 
         // DOM Elements
-        const userAvatar = document.getElementById('userAvatar');
-        const userName = document.getElementById('userName');
+        const userSection = document.getElementById('userSection');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
         const subjectInfo = document.getElementById('subjectInfo');
         const messagesContainer = document.getElementById('messagesContainer');
         const messageInput = document.getElementById('messageInput');
@@ -725,15 +902,14 @@
             }
         };
 
-        // Initialize user
+        // Khởi tạo giao diện người dùng
         function initializeUser() {
             const userData = JSON.parse(localStorage.getItem('user') || '{}');
             
             if (userData.uid && !userData.isGuest) {
                 // User is logged in
                 currentUser = userData;
-                userName.textContent = userData.displayName || 'Người dùng';
-                userAvatar.textContent = (userData.displayName || 'U').charAt(0).toUpperCase();
+                renderUserInfo(userData);
             } else {
                 // Guest user
                 currentUser = {
@@ -741,8 +917,7 @@
                     displayName: 'Khách',
                     isGuest: true
                 };
-                userName.textContent = 'Khách';
-                userAvatar.textContent = 'K';
+                renderGuestInfo();
             }
             
             // Load chat history from localStorage
@@ -756,6 +931,52 @@
                     chatHistory = [];
                 }
             }
+        }
+
+        // Render user information
+        function renderUserInfo(user) {
+            const displayName = user.displayName || 'Người dùng';
+            const email = user.email || '';
+            const firstLetter = displayName.charAt(0).toUpperCase();
+            
+            userSection.innerHTML = `
+                <div class="user-info">
+                    <div class="user-avatar">${firstLetter}</div>
+                    <div class="user-details">
+                        <div class="user-name">${displayName}</div>
+                        ${email ? `<div class="user-email">${email}</div>` : ''}
+                    </div>
+                </div>
+                <div class="auth-buttons">
+                    <a href="index.html" class="auth-btn home-btn">
+                        <i class="fas fa-home"></i> <span>Trang chủ</span>
+                    </a>
+                    <button onclick="logout()" class="auth-btn logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> <span>Đăng xuất</span>
+                    </button>
+                </div>
+            `;
+        }
+
+        // Render guest information
+        function renderGuestInfo() {
+            userSection.innerHTML = `
+                <div class="user-info">
+                    <div class="user-avatar">K</div>
+                    <div class="user-details">
+                        <div class="user-name">Khách</div>
+                        <div class="user-email">Đang dùng thử</div>
+                    </div>
+                </div>
+                <div class="auth-buttons">
+                    <a href="index.html" class="auth-btn home-btn">
+                        <i class="fas fa-home"></i> <span>Trang chủ</span>
+                    </a>
+                    <a href="auth.html" class="auth-btn login-btn">
+                        <i class="fas fa-sign-in-alt"></i> <span>Đăng nhập</span>
+                    </a>
+                </div>
+            `;
         }
 
         // Save chat history
@@ -851,7 +1072,6 @@
             // Clear and display new chat history
             messagesContainer.innerHTML = '';
             if (chatHistory.length === 0) {
-                // Add welcome message for new subject
                 const welcomeMessage = `Thầy/cô chuyển sang hỗ trợ em học môn <strong>${subjectName}</strong>. 
                                       ${subjects[subject]?.icon ? `<i class="fas fa-${subjects[subject].icon}"></i> ` : ''}
                                       Em có câu hỏi nào không?`;
@@ -860,6 +1080,42 @@
             } else {
                 displayChatHistory();
             }
+        }
+
+        // Xử lý Markdown và LaTeX
+        function processMarkdown(text) {
+            // Xử lý LaTeX inline
+            text = text.replace(/\$(.*?)\$/g, (match, latex) => {
+                try {
+                    return katex.renderToString(latex, { throwOnError: false, displayMode: false });
+                } catch (e) {
+                    return match;
+                }
+            });
+            
+            // Xử lý LaTeX block
+            text = text.replace(/\$\$(.*?)\$\$/g, (match, latex) => {
+                try {
+                    return katex.renderToString(latex, { throwOnError: false, displayMode: true });
+                } catch (e) {
+                    return match;
+                }
+            });
+            
+            // Xử lý Markdown
+            let processedText = marked.parse(text);
+            
+            // Thêm class cho các thành phần đặc biệt
+            processedText = processedText.replace(/<h1/g, '<h1 class="math-heading"');
+            processedText = processedText.replace(/<h2/g, '<h2 class="math-heading"');
+            processedText = processedText.replace(/<h3/g, '<h3 class="math-heading"');
+            processedText = processedText.replace(/<h4/g, '<h4 class="math-heading"');
+            processedText = processedText.replace(/<strong>/g, '<strong class="math-strong">');
+            processedText = processedText.replace(/<code>/g, '<code class="math-code">');
+            processedText = processedText.replace(/<pre>/g, '<pre class="math-pre">');
+            processedText = processedText.replace(/<blockquote>/g, '<blockquote class="math-quote">');
+            
+            return processedText;
         }
 
         // Add message to display (không lưu vào history)
@@ -898,13 +1154,32 @@
                 fileHtml += '</div>';
             }
             
+            // Xử lý Markdown và LaTeX cho tin nhắn bot
+            let displayText = text;
+            if (sender === 'bot') {
+                displayText = processMarkdown(text);
+            }
+            
             messageDiv.innerHTML = `
-                <div class="message-content">${text}${fileHtml}</div>
+                <div class="message-content">${displayText}${fileHtml}</div>
                 <div class="message-time">${timeString}</div>
             `;
             
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Render lại LaTeX sau khi đã thêm vào DOM
+            if (sender === 'bot') {
+                setTimeout(() => {
+                    renderMathInElement(messageDiv, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false
+                    });
+                }, 100);
+            }
         }
 
         // Add message và lưu vào history
@@ -1090,23 +1365,6 @@
                 notification.style.animation = 'slideOut 0.3s ease';
                 setTimeout(() => notification.remove(), 300);
             }, 3000);
-            
-            // Add CSS for animations
-            if (!document.querySelector('#notification-styles')) {
-                const style = document.createElement('style');
-                style.id = 'notification-styles';
-                style.textContent = `
-                    @keyframes slideIn {
-                        from { transform: translateX(100%); opacity: 0; }
-                        to { transform: translateX(0); opacity: 1; }
-                    }
-                    @keyframes slideOut {
-                        from { transform: translateX(0); opacity: 1; }
-                        to { transform: translateX(100%); opacity: 0; }
-                    }
-                `;
-                document.head.appendChild(style);
-            }
         }
 
         // Prepare prompt for Gemini
@@ -1202,7 +1460,7 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
             return textInfo;
         }
 
-        // Send message - PHIÊN BẢN ĐÃ SỬA LỖI
+        // Send message
         async function sendMessage() {
             const text = messageInput.value.trim();
             
@@ -1259,23 +1517,20 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
                 // Combine prompt with file text
                 const finalPrompt = prompt + fileText;
                 
-                // Generate response - SỬA LỖI: Xử lý lỗi API tốt hơn
+                // Generate response
                 let result;
                 try {
                     if (fileContents.length > 0) {
-                        // Send with images
                         result = await model.generateContent([finalPrompt, ...fileContents]);
                     } else {
-                        // Send text only
                         result = await model.generateContent(finalPrompt);
                     }
                 } catch (apiError) {
                     console.error('Lỗi API Gemini:', apiError);
                     
-                    // Fallback: thử model khác nếu lỗi 404
+                    // Fallback
                     if (apiError.message?.includes('404') || apiError.status === 404) {
                         try {
-                            // Thử model khác
                             const fallbackModel = genAI.getGenerativeModel({ 
                                 model: "gemini-pro",
                                 generationConfig: {
@@ -1305,7 +1560,6 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
             } catch (error) {
                 console.error('Lỗi khi gửi tin nhắn:', error);
                 
-                // Hiển thị thông báo lỗi thân thiện
                 let errorMessage = 'Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau.';
                 
                 if (error.message.includes('mạng')) {
@@ -1333,15 +1587,8 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
             }
         });
 
-        // Auto-resize textarea (nếu muốn thêm textarea sau này)
-        function autoResize(textarea) {
-            textarea.style.height = 'auto';
-            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
-        }
-
         // Logout
         function logout() {
-            // Save chat history before logout
             saveChatHistory();
             
             auth.signOut().then(() => {
@@ -1359,19 +1606,33 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
             await loadSubjectKnowledge();
             await loadHomeworkData();
             
-            // Add welcome message if no history
-            if (chatHistory.length === 0) {
-                addMessage('bot', `Chào em! Thầy/cô là trợ lý AI học tập của trường THCS Nguyễn Tri Phương. 
-                               Em có thể hỏi bất cứ điều gì về môn <strong>${subjects[currentSubject].name}</strong>, 
-                               gửi file bài tập, hoặc yêu cầu giải thích chi tiết.`);
-            }
-            
             // Set up subject buttons
             subjectButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     selectSubject(button.dataset.subject);
                 });
             });
+            
+            // Set up sidebar toggle
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('show');
+            });
+            
+            // Close sidebar when clicking outside (mobile)
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768) {
+                    if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                        sidebar.classList.remove('show');
+                    }
+                }
+            });
+            
+            // Add welcome message if no history
+            if (chatHistory.length === 0) {
+                addMessage('bot', `Chào em! Thầy/cô là trợ lý AI học tập của trường THCS Nguyễn Tri Phương. 
+                               Em có thể hỏi bất cứ điều gì về môn <strong>${subjects[currentSubject].name}</strong>, 
+                               gửi file bài tập, hoặc yêu cầu giải thích chi tiết.`);
+            }
             
             // Focus on input
             setTimeout(() => {
