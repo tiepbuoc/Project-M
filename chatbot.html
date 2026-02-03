@@ -15,12 +15,19 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
     
     <!-- Markdown parser -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    
+    <!-- PDF.js & html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    
+    <!-- Mammoth.js for DOCX -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.8/mammoth.browser.min.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
@@ -329,7 +336,7 @@
             overflow-wrap: break-word;
         }
 
-        /* Markdown Styling - CẢI THIỆN */
+        /* Markdown Styling */
         .message-content h1,
         .message-content h2,
         .message-content h3,
@@ -421,7 +428,7 @@
             font-weight: 600;
         }
 
-        /* KaTeX Styling - ĐỒNG BỘ VỚI FONT CHÍNH */
+        /* KaTeX Styling */
         .message-content .katex,
         .message-content .katex-display {
             font-family: 'Quicksand', sans-serif !important;
@@ -475,6 +482,51 @@
             border: 1px solid #dee2e6;
         }
 
+        /* PDF Preview */
+        .pdf-preview {
+            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+            border-left: 3px solid #e63946;
+            padding: 8px 12px;
+            margin-top: 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+
+        .pdf-converting {
+            background: #fff3cd;
+            border-left: 3px solid #ffc107;
+            padding: 8px 12px;
+            margin-top: 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            color: #856404;
+        }
+
+        /* File Preview Text */
+        .file-preview-text {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+            margin-top: 5px;
+            font-size: 0.85em;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* File Type Hint */
+        .file-type-hint {
+            background: #d1ecf1;
+            border-left: 4px solid #0dcaf0;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: #055160;
+        }
+
         /* Input Area */
         .input-area {
             padding: 20px;
@@ -497,13 +549,22 @@
 
         .attachment-item {
             display: flex;
-            align-items: center;
+            flex-direction: column;
             gap: 8px;
             background: white;
-            padding: 8px 12px;
-            border-radius: 15px;
+            padding: 10px;
+            border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             font-size: 0.9em;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .attachment-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
         }
 
         .remove-attachment {
@@ -512,6 +573,7 @@
             color: #dc3545;
             cursor: pointer;
             font-size: 1.2em;
+            padding: 0 5px;
         }
 
         .file-input {
@@ -598,6 +660,17 @@
         @keyframes bounce {
             0%, 80%, 100% { transform: scale(0); }
             40% { transform: scale(1); }
+        }
+
+        /* Animation cho quá trình xử lý */
+        @keyframes processing {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        .processing {
+            animation: processing 1.5s infinite;
         }
 
         /* Responsive */
@@ -910,27 +983,23 @@
             appId: "1:25688122219:web:6ff91267b41968a23e622e"
         };
 
-        // Initialize Firebase (chỉ khi cần)
+        // Initialize Firebase
         let firestoreInitialized = false;
         let auth, db;
         
         try {
-            // Khởi tạo Firebase app
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
             }
             
-            // Chỉ khởi tạo auth và firestore khi cần
             auth = firebase.auth();
             db = firebase.firestore();
             firestoreInitialized = true;
             
-            // Tối ưu cài đặt Firestore để giảm kết nối
             db.settings({
                 cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
             });
             
-            // Bật persistence
             db.enablePersistence()
                 .catch((err) => {
                     console.warn('Không thể bật persistence:', err.code);
@@ -948,7 +1017,7 @@
         try {
             genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
             model = genAI.getGenerativeModel({ 
-                model: "gemini-2.5-flash",
+                model: "gemini-1.5-flash",
                 generationConfig: {
                     temperature: 0.7,
                     topP: 0.8,
@@ -1065,12 +1134,13 @@
             headerIds: false
         });
 
+        // ========== CORE FUNCTIONS ==========
+
         // Initialize user
         function initializeUser() {
             const userData = JSON.parse(localStorage.getItem('user') || '{}');
             
             if (userData.uid && !userData.isGuest) {
-                // User is logged in
                 currentUser = userData;
                 const displayName = userData.displayName || 'Người dùng';
                 const email = userData.email || '';
@@ -1094,7 +1164,6 @@
                     </button>
                 `;
             } else {
-                // Guest user
                 currentUser = {
                     uid: userData.uid || 'guest_' + Date.now(),
                     displayName: 'Khách',
@@ -1108,7 +1177,6 @@
                 `;
             }
             
-            // Load chat history from sessionStorage
             const savedHistory = sessionStorage.getItem(`chatHistory_${currentUser.uid}_${currentSubject}`);
             if (savedHistory) {
                 try {
@@ -1120,6 +1188,339 @@
                 }
             }
         }
+
+        // File to base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // Hàm chuyển PDF thành ảnh
+        async function pdfToImages(file) {
+            try {
+                console.log('Bắt đầu chuyển PDF thành ảnh:', file.name);
+                
+                const fileUrl = URL.createObjectURL(file);
+                const loadingTask = pdfjsLib.getDocument(fileUrl);
+                const pdf = await loadingTask.promise;
+                
+                console.log(`PDF có ${pdf.numPages} trang`);
+                
+                const images = [];
+                const maxPages = Math.min(pdf.numPages, 3);
+                
+                for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
+                    console.log(`Đang xử lý trang ${pageNum}/${maxPages}`);
+                    
+                    const page = await pdf.getPage(pageNum);
+                    const scale = 1.5;
+                    const viewport = page.getViewport({ scale });
+                    
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    
+                    await page.render(renderContext).promise;
+                    
+                    const imageBlob = await new Promise(resolve => {
+                        canvas.toBlob(resolve, 'image/jpeg', 0.7);
+                    });
+                    
+                    const imageFile = new File(
+                        [imageBlob], 
+                        `${file.name}_page_${pageNum}.jpg`, 
+                        { type: 'image/jpeg' }
+                    );
+                    
+                    images.push(imageFile);
+                }
+                
+                URL.revokeObjectURL(fileUrl);
+                console.log(`Đã chuyển ${images.length} trang PDF thành ảnh`);
+                return images;
+                
+            } catch (error) {
+                console.error('Lỗi chuyển PDF thành ảnh:', error);
+                throw new Error(`Không thể chuyển PDF thành ảnh: ${error.message}`);
+            }
+        }
+
+        // Hàm đọc DOC/DOCX
+        async function readDocxFile(file) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
+                return result.value;
+            } catch (error) {
+                console.error('Lỗi đọc DOCX:', error);
+                return `[Không thể đọc nội dung DOCX: ${file.name}]`;
+            }
+        }
+
+        // Hàm đọc file văn bản
+        async function readTextFile(file) {
+            try {
+                if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+                    return await file.text();
+                } else if (file.name.endsWith('.doc') || file.name.endsWith('.docx') || 
+                          file.type.includes('word') || file.type.includes('document')) {
+                    return await readDocxFile(file);
+                } else if (file.name.endsWith('.ppt') || file.name.endsWith('.pptx')) {
+                    return `[File PowerPoint: ${file.name} - Vui lòng chuyển sang PDF hoặc ảnh để phân tích]`;
+                } else {
+                    return `[Định dạng không hỗ trợ đọc: ${file.name}]`;
+                }
+            } catch (error) {
+                console.error('Lỗi đọc file:', error);
+                return `[Lỗi khi đọc file ${file.name}]`;
+            }
+        }
+
+        // Xử lý file cho AI
+        async function processFilesForAI(files) {
+            const processedFiles = [];
+            const textContents = [];
+            
+            for (const file of files) {
+                if (file.type.startsWith('image/')) {
+                    try {
+                        const base64Data = await fileToBase64(file);
+                        processedFiles.push({
+                            inlineData: {
+                                data: base64Data.split(',')[1],
+                                mimeType: file.type
+                            }
+                        });
+                    } catch (error) {
+                        console.error('Lỗi xử lý ảnh:', error);
+                    }
+                    
+                } else if (file.type.includes('pdf') || file.name.endsWith('.pdf')) {
+                    try {
+                        showNotification(`Đang chuyển PDF "${file.name}" thành ảnh...`, 'info');
+                        
+                        const pdfImages = await pdfToImages(file);
+                        
+                        for (const imageFile of pdfImages) {
+                            try {
+                                const base64Data = await fileToBase64(imageFile);
+                                processedFiles.push({
+                                    inlineData: {
+                                        data: base64Data.split(',')[1],
+                                        mimeType: 'image/jpeg'
+                                    }
+                                });
+                            } catch (error) {
+                                console.error('Lỗi xử lý ảnh PDF:', error);
+                            }
+                        }
+                        
+                        showNotification(`Đã chuyển ${pdfImages.length} trang PDF thành ảnh`, 'success');
+                        
+                    } catch (error) {
+                        console.error('Lỗi xử lý PDF:', error);
+                        textContents.push(`[PDF: ${file.name} - Không thể chuyển thành ảnh]`);
+                    }
+                    
+                } else {
+                    try {
+                        const text = await readTextFile(file);
+                        textContents.push(`\n\n--- FILE: ${file.name} ---\n${text.substring(0, 3000)}`);
+                    } catch (error) {
+                        console.error('Lỗi đọc file văn bản:', error);
+                        textContents.push(`\n\n--- FILE: ${file.name} ---\n[Không thể đọc nội dung]`);
+                    }
+                }
+            }
+            
+            return {
+                images: processedFiles,
+                text: textContents.join('\n')
+            };
+        }
+
+        // Chuẩn bị prompt
+        function preparePrompt(userText, hasImages = false, hasPDF = false) {
+            const subject = subjects[currentSubject];
+            
+            let prompt = `Bạn là giáo viên AI của trường THCS Nguyễn Tri Phương.
+Xưng hô: thầy/cô với học sinh là "em".
+Chuyên môn: ${subject.name} - Chương trình giáo dục phổ thông mới.
+
+**HƯỚNG DẪN PHÂN TÍCH:**
+1. Sử dụng markdown để định dạng
+2. Công thức toán: $...$ hoặc $$...$$
+3. KHÔNG dùng thẻ HTML
+4. Phân tích từng bước chi tiết
+
+Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư duy.\n\n`;
+
+            if (subject.systemPrompt) {
+                prompt += `${subject.systemPrompt}\n\n`;
+            }
+
+            if (hasImages || hasPDF) {
+                prompt += `**HỌC SINH ĐÃ GỬI BÀI TẬP DƯỚI DẠNG HÌNH ẢNH/PDF:**\n`;
+                prompt += `Hãy phân tích nội dung trong ảnh/PDF theo các bước:\n`;
+                prompt += `1. **MÔ TẢ NỘI DUNG**: Tóm tắt đề bài, câu hỏi trong ảnh\n`;
+                prompt += `2. **PHÂN LOẠI**: Xác định dạng bài tập\n`;
+                prompt += `3. **HƯỚNG DẪN GIẢI**: Từng bước chi tiết\n`;
+                prompt += `4. **GIẢI THÍCH**: Các khái niệm, định lý liên quan\n`;
+                prompt += `5. **BÀI TẬP TƯƠNG TỰ**: Đề xuất bài tập luyện tập\n`;
+                prompt += `6. **LƯU Ý**: Sai lầm thường gặp\n\n`;
+                
+                if (currentSubject.includes('toan')) {
+                    prompt += `**ĐỐI VỚI TOÁN**:\n`;
+                    prompt += `- Nhận dạng công thức toán trong ảnh\n`;
+                    prompt += `- Viết lại công thức bằng LaTeX\n`;
+                    prompt += `- Giải thích từng bước biến đổi\n`;
+                    prompt += `- Kiểm tra kết quả nếu có đáp án\n\n`;
+                }
+            }
+
+            prompt += `CÂU HỎI/ĐỀ BÀI: ${userText || "Phân tích nội dung trong file/ảnh đính kèm"}\n\n`;
+
+            return prompt;
+        }
+
+        // Send message
+        async function sendMessage() {
+            if (isProcessing) return;
+            
+            const text = messageInput.value.trim();
+            
+            if (!text && attachedFiles.length === 0) {
+                showNotification('Vui lòng nhập tin nhắn hoặc chọn file', 'warning');
+                return;
+            }
+            
+            const fileUrls = attachedFiles.map(file => ({
+                name: file.name,
+                type: file.type,
+                url: URL.createObjectURL(file)
+            }));
+            
+            addMessage('user', text, fileUrls);
+            
+            messageInput.value = '';
+            const filesToSend = [...attachedFiles];
+            attachedFiles = [];
+            attachmentPreview.style.display = 'none';
+            attachmentPreview.innerHTML = '';
+            
+            sendButton.disabled = true;
+            isProcessing = true;
+            sendButton.innerHTML = '<div class="loading-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+            
+            try {
+                const lowerText = text.toLowerCase();
+                if (lowerText.includes('chào') || lowerText.includes('hello') || lowerText.includes('hi')) {
+                    setTimeout(() => {
+                        addMessage('bot', `Chào em! Thầy/cô rất vui được hỗ trợ em học môn **${subjects[currentSubject].name}**. 
+                                       \n\nEm có câu hỏi gì về bài học hôm nay không?`);
+                        sendButton.disabled = false;
+                        isProcessing = false;
+                        sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                    }, 500);
+                    return;
+                }
+                
+                if (!model) {
+                    throw new Error('AI chưa sẵn sàng');
+                }
+                
+                if (filesToSend.length > 0) {
+                    const hasPDF = filesToSend.some(f => f.name.endsWith('.pdf'));
+                    if (hasPDF) {
+                        addMessage('bot', `📚 **Đang xử lý file PDF...**\nĐang chuyển PDF thành ảnh để AI đọc nội dung. Vui lòng chờ!`);
+                    } else {
+                        addMessage('bot', `📎 **Đang đọc ${filesToSend.length} file đính kèm...**`);
+                    }
+                }
+                
+                const { images: processedImages, text: fileText } = await processFilesForAI(filesToSend);
+                
+                const hasImages = processedImages.length > 0;
+                const hasPDF = filesToSend.some(f => f.name.endsWith('.pdf'));
+                let prompt = preparePrompt(text, hasImages, hasPDF);
+                
+                if (fileText) {
+                    prompt += `\n\n--- NỘI DUNG TỪ CÁC FILE VĂN BẢN ---${fileText}`;
+                }
+                
+                if (hasPDF) {
+                    const pdfFiles = filesToSend.filter(f => f.name.endsWith('.pdf'));
+                    prompt += `\n\n--- THÔNG TIN PDF ---\n`;
+                    pdfFiles.forEach(pdf => {
+                        prompt += `• ${pdf.name} (đã chuyển thành ${processedImages.length} ảnh để phân tích)\n`;
+                    });
+                }
+                
+                let result;
+                if (processedImages.length > 0) {
+                    console.log(`Gửi ${processedImages.length} ảnh cho Gemini...`);
+                    result = await model.generateContent([prompt, ...processedImages]);
+                } else {
+                    result = await model.generateContent(prompt);
+                }
+                
+                const response = await result.response;
+                let botResponse = response.text();
+                
+                if (botResponse.length > 1500) {
+                    botResponse += `\n\n---\n*📝 Đây là phân tích chi tiết. Em có chỗ nào cần giải thích thêm không?*`;
+                }
+                
+                addMessage('bot', botResponse);
+                
+            } catch (error) {
+                console.error('Lỗi khi gửi tin nhắn:', error);
+                
+                let errorMsg = '**Xin lỗi, có lỗi xảy ra!**\n\n';
+                
+                if (error.message.includes('quota') || error.message.includes('limit')) {
+                    errorMsg += '⚠️ **Đã vượt quá giới hạn sử dụng AI.**\n';
+                    errorMsg += 'Vui lòng thử lại sau ít phút hoặc:\n';
+                    errorMsg += '1. Mô tả bài tập bằng lời\n';
+                    errorMsg += '2. Chụp ảnh rõ nét thay vì PDF\n';
+                    errorMsg += '3. Chia nhỏ file lớn thành nhiều phần';
+                } 
+                else if (filesToSend.some(f => f.name.endsWith('.pdf'))) {
+                    errorMsg += '**Không thể đọc file PDF.**\n\n';
+                    errorMsg += '**Giải pháp thay thế:**\n';
+                    errorMsg += '1. 📸 **Chụp ảnh màn hình** từng trang PDF\n';
+                    errorMsg += '2. ✂️ **Cắt file PDF** thành trang nhỏ hơn\n';
+                    errorMsg += '3. 📝 **Sao chép nội dung** vào tin nhắn\n';
+                    errorMsg += '4. 🖼️ **Xuất PDF thành ảnh** trước khi gửi';
+                }
+                else {
+                    errorMsg += 'Vui lòng thử lại hoặc:\n';
+                    errorMsg += '• Kiểm tra kết nối mạng\n';
+                    errorMsg += '• Gửi lại file với kích thước nhỏ hơn\n';
+                    errorMsg += '• Mô tả bài tập bằng lời';
+                }
+                
+                addMessage('bot', errorMsg);
+                showNotification('Có lỗi xảy ra', 'error');
+            }
+            
+            sendButton.disabled = false;
+            isProcessing = false;
+            sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
+        }
+
+        // ========== UI FUNCTIONS ==========
 
         // Save chat history
         function saveChatHistory() {
@@ -1134,7 +1535,6 @@
         function displayChatHistory() {
             messagesContainer.innerHTML = '';
             
-            // Add welcome message
             const now = new Date();
             const welcomeDiv = document.createElement('div');
             welcomeDiv.className = 'message bot-message';
@@ -1144,12 +1544,10 @@
             `;
             messagesContainer.appendChild(welcomeDiv);
             
-            // Add chat history
             chatHistory.forEach(item => {
                 addMessageToDisplay(item.role, item.text, item.files || []);
             });
             
-            // Render LaTeX trong toàn bộ messages container
             setTimeout(() => {
                 renderMathInElement(messagesContainer, {
                     delimiters: [
@@ -1162,126 +1560,14 @@
             }, 100);
         }
 
-        // Load subject knowledge from Firestore (chỉ khi cần)
-        async function loadSubjectKnowledge() {
-            if (!firestoreInitialized) return;
-            
-            try {
-                const snapshot = await db.collection('subject_knowledge')
-                    .where('subject', '==', currentSubject)
-                    .limit(1)
-                    .get();
-                
-                subjectKnowledge = {};
-                
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    subjectKnowledge[currentSubject] = data.knowledge || '';
-                });
-                
-                console.log(`✅ Đã tải kiến thức cho môn ${currentSubject}`);
-            } catch (error) {
-                console.warn('⚠ Không thể tải kiến thức từ Firestore:', error);
-                subjectKnowledge = {};
-            }
-        }
-
-        // Load homework data from Firestore (chỉ khi cần)
-        async function loadHomeworkData() {
-            if (!firestoreInitialized) return;
-            
-            try {
-                const snapshot = await db.collection('homework')
-                    .where('subject', '==', currentSubject)
-                    .limit(5)
-                    .get();
-                
-                homeworkData = {};
-                homeworkData[currentSubject] = [];
-                
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    homeworkData[currentSubject].push({
-                        question: data.question,
-                        answer: data.answer,
-                        difficulty: data.difficulty || 'medium'
-                    });
-                });
-                
-                console.log(`✅ Đã tải bài tập cho môn ${currentSubject}`);
-            } catch (error) {
-                console.warn('⚠ Không thể tải bài tập từ Firestore:', error);
-                homeworkData = {};
-            }
-        }
-
-        // Clean up Firestore listeners
-        function cleanupFirestoreListeners() {
-            firestoreListeners.forEach(unsubscribe => {
-                if (unsubscribe && typeof unsubscribe === 'function') {
-                    unsubscribe();
-                }
-            });
-            firestoreListeners = [];
-        }
-
-        // Select subject
-        function selectSubject(subject) {
-            // Save current chat history
-            saveChatHistory();
-            
-            // Clean up listeners
-            cleanupFirestoreListeners();
-            
-            // Update active button
-            subjectButtons.forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.subject === subject);
-            });
-            
-            // Update current subject
-            currentSubject = subject;
-            
-            // Update subject info
-            const subjectName = subjects[subject]?.name || subject;
-            subjectInfo.innerHTML = `Chào em! Thầy/cô sẵn sàng hỗ trợ em học môn <strong>${subjectName}</strong>. 
-                                   Em có thể hỏi bài, gửi file hoặc yêu cầu bài tập.`;
-            
-            // Load chat history for new subject
-            const savedHistory = sessionStorage.getItem(`chatHistory_${currentUser.uid}_${currentSubject}`);
-            if (savedHistory) {
-                try {
-                    chatHistory = JSON.parse(savedHistory);
-                } catch (error) {
-                    chatHistory = [];
-                }
-            } else {
-                chatHistory = [];
-            }
-            
-            // Load data for new subject
-            loadSubjectKnowledge();
-            loadHomeworkData();
-            
-            // Display chat history
-            displayChatHistory();
-            
-            // Close sidebar on mobile
-            if (window.innerWidth <= 768) {
-                hideSidebar();
-            }
-        }
-
-        // Process markdown và render LaTeX đúng cách
+        // Process markdown
         function processMarkdown(text) {
             if (!text) return '';
-            
-            // Parse markdown
             let html = marked.parse(text);
-            
             return html;
         }
 
-        // Add message to display với markdown và LaTeX
+        // Add message to display
         function addMessageToDisplay(sender, text, files = []) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}-message`;
@@ -1317,7 +1603,6 @@
                 fileHtml += '</div>';
             }
             
-            // Process markdown cho bot messages
             let htmlContent = '';
             if (sender === 'bot') {
                 htmlContent = processMarkdown(text);
@@ -1332,7 +1617,6 @@
             
             messagesContainer.appendChild(messageDiv);
             
-            // Render LaTeX trong message mới
             if (sender === 'bot') {
                 setTimeout(() => {
                     renderMathInElement(messageDiv, {
@@ -1353,7 +1637,6 @@
         function addMessage(sender, text, files = []) {
             addMessageToDisplay(sender, text, files);
             
-            // Lưu vào history
             chatHistory.push({
                 role: sender,
                 text: text,
@@ -1361,7 +1644,6 @@
                 files: files.map(f => ({ name: f.name, type: f.type, url: f.url }))
             });
             
-            // Giới hạn lịch sử chat
             if (chatHistory.length > 50) {
                 chatHistory = chatHistory.slice(-50);
             }
@@ -1422,58 +1704,74 @@
             document.body.appendChild(modal);
         }
 
-        // File to base64
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
+        // Preview text file
+        function previewTextFile(file, text) {
+            const previewDiv = document.createElement('div');
+            previewDiv.className = 'file-preview-text';
+            const previewText = text.length > 1000 ? text.substring(0, 1000) + '...' : text;
+            previewDiv.textContent = previewText;
+            return previewDiv;
+        }
+
+        // Show PDF preview
+        async function showPDFPreview(file) {
+            return new Promise((resolve) => {
                 const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
+                reader.onload = function(e) {
+                    const preview = document.createElement('div');
+                    preview.className = 'pdf-preview';
+                    preview.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+                            <i class="fas fa-file-pdf" style="color: #e63946;"></i>
+                            <strong>${file.name}</strong>
+                            <span style="font-size: 0.8em; color: #6c757d;">
+                                (${(file.size / 1024).toFixed(1)} KB)
+                            </span>
+                        </div>
+                        <div style="font-size: 0.8em; color: #6c757d;">
+                            ⚡ Sẽ được chuyển thành ảnh để AI đọc
+                        </div>
+                    `;
+                    resolve(preview);
+                };
+                reader.readAsArrayBuffer(file);
             });
         }
 
-        // Handle file selection
-        fileInput.addEventListener('change', (e) => {
-            const files = Array.from(e.target.files);
-            
-            // Check file size (max 5MB)
-            const maxSize = 5 * 1024 * 1024;
-            const validFiles = files.filter(file => file.size <= maxSize);
-            
-            if (validFiles.length < files.length) {
-                showNotification('Một số file vượt quá giới hạn 5MB và đã bị bỏ qua.', 'warning');
-            }
-            
-            // Add valid files
-            validFiles.forEach(file => {
-                attachedFiles.push(file);
-                addAttachmentPreview(file);
-            });
-            
-            // Show preview
-            if (attachedFiles.length > 0) {
-                attachmentPreview.style.display = 'flex';
-            }
-            
-            // Reset input
-            fileInput.value = '';
-        });
-
         // Add attachment preview
-        function addAttachmentPreview(file) {
+        async function addAttachmentPreview(file) {
             const attachmentItem = document.createElement('div');
             attachmentItem.className = 'attachment-item';
             
             const icon = getFileIcon(file.type, file.name);
-            const fileName = file.name.length > 20 ? file.name.substring(0, 17) + '...' : file.name;
+            const fileName = file.name.length > 25 ? file.name.substring(0, 22) + '...' : file.name;
             
             attachmentItem.innerHTML = `
-                ${icon}
-                <span>${fileName}</span>
-                <button class="remove-attachment" onclick="removeAttachment(${attachedFiles.length - 1})">
-                    <i class="fas fa-times"></i>
-                </button>
+                <div class="attachment-header">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        ${icon}
+                        <span style="font-weight: 500;">${fileName}</span>
+                        <span style="font-size: 0.8em; color: #6c757d;">
+                            (${(file.size / 1024).toFixed(1)} KB)
+                        </span>
+                    </div>
+                    <button class="remove-attachment" onclick="removeAttachment(${attachedFiles.length - 1})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             `;
+            
+            if (file.name.endsWith('.pdf')) {
+                const pdfPreview = await showPDFPreview(file);
+                attachmentItem.appendChild(pdfPreview);
+            } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = previewTextFile(file, e.target.result);
+                    attachmentItem.appendChild(preview);
+                };
+                reader.readAsText(file);
+            }
             
             attachmentPreview.appendChild(attachmentItem);
         }
@@ -1493,21 +1791,48 @@
                 attachmentItem.className = 'attachment-item';
                 
                 const icon = getFileIcon(file.type, file.name);
-                const fileName = file.name.length > 20 ? file.name.substring(0, 17) + '...' : file.name;
+                const fileName = file.name.length > 25 ? file.name.substring(0, 22) + '...' : file.name;
                 
                 attachmentItem.innerHTML = `
-                    ${icon}
-                    <span>${fileName}</span>
-                    <button class="remove-attachment" onclick="removeAttachment(${index})">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <div class="attachment-header">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            ${icon}
+                            <span style="font-weight: 500;">${fileName}</span>
+                            <span style="font-size: 0.8em; color: #6c757d;">
+                                (${(file.size / 1024).toFixed(1)} KB)
+                            </span>
+                        </div>
+                        <button class="remove-attachment" onclick="removeAttachment(${index})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                 `;
+                
+                if (file.name.endsWith('.pdf')) {
+                    const preview = document.createElement('div');
+                    preview.className = 'pdf-preview';
+                    preview.innerHTML = `
+                        <div style="font-size: 0.8em; color: #6c757d;">
+                            ⚡ Sẽ được chuyển thành ảnh để AI đọc
+                        </div>
+                    `;
+                    attachmentItem.appendChild(preview);
+                } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const preview = previewTextFile(file, e.target.result);
+                        attachmentItem.appendChild(preview);
+                    };
+                    reader.readAsText(file);
+                }
                 
                 attachmentPreview.appendChild(attachmentItem);
             });
             
             if (attachedFiles.length === 0) {
                 attachmentPreview.style.display = 'none';
+            } else {
+                attachmentPreview.style.display = 'flex';
             }
         }
 
@@ -1544,202 +1869,97 @@
             }, 3000);
         }
 
-        // Prepare prompt for Gemini
-        function preparePrompt(userText, files = []) {
-            const subject = subjects[currentSubject];
-            let prompt = `Bạn là một giáo viên AI thân thiện, hỗ trợ học sinh THCS trường Nguyễn Tri Phương.
-Xưng hô: thầy/cô với học sinh là em.
-Chuyên môn: ${subject.name} theo chương trình giáo dục mới THCS Việt Nam.
+        // ========== SUBJECT MANAGEMENT ==========
 
-**QUAN TRỌNG:** Sử dụng markdown để định dạng câu trả lời:
-1. Tiêu đề: #, ##, ###, ####
-2. In đậm: **văn bản**
-3. In nghiêng: *văn bản*
-4. Danh sách: - item hoặc 1. item
-5. Đường kẻ ngang: ---
-6. Code: \`code\` hoặc \`\`\`code block\`\`\`
-7. Công thức toán: $công_thức$ (inline) hoặc $$công_thức$$ (display)
-   KHÔNG BAO GIỜ tự thêm span hay class. Chỉ dùng $ và $$.
-
-Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư duy.\n\n`;
-
-            // Thêm prompt đặc biệt cho môn học
-            if (subject.systemPrompt) {
-                prompt += `${subject.systemPrompt}\n\n`;
-            }
-
-            // Thêm kiến thức từ admin nếu có
-            if (subjectKnowledge[currentSubject]) {
-                prompt += `KIẾN THỨC BỔ SUNG (từ giáo viên):\n${subjectKnowledge[currentSubject]}\n\n`;
-            }
-
-            // Thêm bài tập mẫu nếu có
-            if (homeworkData[currentSubject] && homeworkData[currentSubject].length > 0) {
-                prompt += `BÀI TẬP THAM KHẢO (có thể sử dụng khi phù hợp):\n`;
-                homeworkData[currentSubject].slice(0, 3).forEach((hw, i) => {
-                    prompt += `${i+1}. ${hw.question}\n   Gợi ý: ${hw.answer.substring(0, 100)}...\n`;
-                });
-                prompt += `\n`;
-            }
-
-            // Thêm câu hỏi của học sinh
-            prompt += `CÂU HỎI CỦA HỌC SINH: ${userText || "Xem file đính kèm và phân tích nội dung."}\n\n`;
-
-            // Thêm thông tin file nếu có
-            if (files.length > 0) {
-                prompt += `Học sinh đã gửi ${files.length} file đính kèm:\n`;
-                files.forEach((file, i) => {
-                    prompt += `${i+1}. ${file.name} (${file.type || 'unknown'})\n`;
-                });
-                prompt += `\nNếu là file bài tập/ảnh bài giải, hãy phân tích và hướng dẫn chi tiết bằng markdown.\n`;
-            }
-
-            prompt += `Hãy trả lời một cách hữu ích và khích lệ bằng markdown đầy đủ!`;
-
-            return prompt;
-        }
-
-        // Process files for Gemini
-        async function processFilesForGemini(files) {
-            const processedFiles = [];
-            
-            for (const file of files) {
-                if (file.type.startsWith('image/')) {
-                    try {
-                        const base64Data = await fileToBase64(file);
-                        processedFiles.push({
-                            inlineData: {
-                                data: base64Data.split(',')[1],
-                                mimeType: file.type
-                            }
-                        });
-                    } catch (error) {
-                        console.error('Lỗi xử lý ảnh:', error);
-                    }
-                }
-            }
-            
-            return processedFiles;
-        }
-
-        // Get text from non-image files
-        async function getTextFromFiles(files) {
-            let textInfo = '';
-            
-            for (const file of files) {
-                if (!file.type.startsWith('image/')) {
-                    try {
-                        if (file.type === 'text/plain' || 
-                            file.type.includes('pdf') || 
-                            file.type.includes('word') || 
-                            file.type.includes('text')) {
-                            const text = await file.text();
-                            textInfo += `\n\nNội dung file "${file.name}":\n${text.substring(0, 3000)}...`;
-                        } else {
-                            textInfo += `\n\nFile: ${file.name} (${file.type}) - Không thể đọc nội dung trực tiếp.`;
-                        }
-                    } catch (error) {
-                        textInfo += `\n\nFile: ${file.name} - Lỗi khi đọc nội dung.`;
-                    }
-                }
-            }
-            
-            return textInfo;
-        }
-
-        // Send message
-        async function sendMessage() {
-            if (isProcessing) return;
-            
-            const text = messageInput.value.trim();
-            
-            if (!text && attachedFiles.length === 0) {
-                showNotification('Vui lòng nhập tin nhắn hoặc chọn file', 'warning');
-                return;
-            }
-            
-            // Add user message to display
-            const fileUrls = attachedFiles.map(file => ({
-                name: file.name,
-                type: file.type,
-                url: URL.createObjectURL(file)
-            }));
-            
-            addMessage('user', text, fileUrls);
-            
-            // Clear input and attachments
-            messageInput.value = '';
-            const filesToSend = [...attachedFiles];
-            attachedFiles = [];
-            attachmentPreview.style.display = 'none';
-            attachmentPreview.innerHTML = '';
-            
-            // Disable send button and show loading
-            sendButton.disabled = true;
-            isProcessing = true;
-            sendButton.innerHTML = '<div class="loading-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+        // Load subject knowledge
+        async function loadSubjectKnowledge() {
+            if (!firestoreInitialized) return;
             
             try {
-                // Check for simple greetings
-                const lowerText = text.toLowerCase();
-                if (lowerText.includes('chào') || lowerText.includes('hello') || lowerText.includes('hi')) {
-                    setTimeout(() => {
-                        addMessage('bot', `Chào em! Thầy/cô rất vui được hỗ trợ em học môn **${subjects[currentSubject].name}**. 
-                                       \n\nEm có câu hỏi gì về bài học hôm nay không?`);
-                        sendButton.disabled = false;
-                        isProcessing = false;
-                        sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
-                    }, 500);
-                    return;
-                }
+                const snapshot = await db.collection('subject_knowledge')
+                    .where('subject', '==', currentSubject)
+                    .limit(1)
+                    .get();
                 
-                // Check if Gemini is available
-                if (!model) {
-                    throw new Error('AI chưa sẵn sàng');
-                }
+                subjectKnowledge = {};
                 
-                // Prepare content for Gemini
-                const prompt = preparePrompt(text, filesToSend);
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    subjectKnowledge[currentSubject] = data.knowledge || '';
+                });
                 
-                // Process files
-                const fileContents = await processFilesForGemini(filesToSend);
-                const fileText = await getTextFromFiles(filesToSend);
-                
-                // Combine prompt with file text
-                const finalPrompt = prompt + fileText;
-                
-                // Generate response
-                let result;
-                try {
-                    if (fileContents.length > 0) {
-                        result = await model.generateContent([finalPrompt, ...fileContents]);
-                    } else {
-                        result = await model.generateContent(finalPrompt);
-                    }
-                } catch (apiError) {
-                    console.error('Lỗi API Gemini:', apiError);
-                    throw new Error('Lỗi kết nối AI');
-                }
-                
-                const response = await result.response;
-                const botResponse = response.text();
-                
-                addMessage('bot', botResponse);
-                
+                console.log(`✅ Đã tải kiến thức cho môn ${currentSubject}`);
             } catch (error) {
-                console.error('Lỗi khi gửi tin nhắn:', error);
-                
-                addMessage('bot', 'Xin lỗi, tạm thời không thể kết nối đến AI. Vui lòng thử lại sau hoặc kiểm tra kết nối mạng.');
-                showNotification('Có lỗi xảy ra khi xử lý yêu cầu', 'error');
+                console.warn('⚠ Không thể tải kiến thức từ Firestore:', error);
+                subjectKnowledge = {};
             }
-            
-            // Re-enable send button
-            sendButton.disabled = false;
-            isProcessing = false;
-            sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
         }
 
-        // Sidebar functions
+        // Load homework data
+        async function loadHomeworkData() {
+            if (!firestoreInitialized) return;
+            
+            try {
+                const snapshot = await db.collection('homework')
+                    .where('subject', '==', currentSubject)
+                    .limit(5)
+                    .get();
+                
+                homeworkData = {};
+                homeworkData[currentSubject] = [];
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    homeworkData[currentSubject].push({
+                        question: data.question,
+                        answer: data.answer,
+                        difficulty: data.difficulty || 'medium'
+                    });
+                });
+                
+                console.log(`✅ Đã tải bài tập cho môn ${currentSubject}`);
+            } catch (error) {
+                console.warn('⚠ Không thể tải bài tập từ Firestore:', error);
+                homeworkData = {};
+            }
+        }
+
+        // Select subject
+        function selectSubject(subject) {
+            saveChatHistory();
+            
+            subjectButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.subject === subject);
+            });
+            
+            currentSubject = subject;
+            
+            const subjectName = subjects[subject]?.name || subject;
+            subjectInfo.innerHTML = `Chào em! Thầy/cô sẵn sàng hỗ trợ em học môn <strong>${subjectName}</strong>. 
+                                   Em có thể hỏi bài, gửi file hoặc yêu cầu bài tập.`;
+            
+            const savedHistory = sessionStorage.getItem(`chatHistory_${currentUser.uid}_${currentSubject}`);
+            if (savedHistory) {
+                try {
+                    chatHistory = JSON.parse(savedHistory);
+                } catch (error) {
+                    chatHistory = [];
+                }
+            } else {
+                chatHistory = [];
+            }
+            
+            loadSubjectKnowledge();
+            loadHomeworkData();
+            displayChatHistory();
+            
+            if (window.innerWidth <= 768) {
+                hideSidebar();
+            }
+        }
+
+        // ========== SIDEBAR FUNCTIONS ==========
+
         function showSidebar() {
             sidebar.classList.add('show');
             sidebarOverlay.classList.add('show');
@@ -1754,6 +1974,31 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
             sidebarToggleIcon.classList.add('fa-bars');
         }
 
+        // ========== EVENT HANDLERS ==========
+
+        // Handle file selection
+        fileInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            
+            const maxSize = 10 * 1024 * 1024;
+            const validFiles = files.filter(file => file.size <= maxSize);
+            
+            if (validFiles.length < files.length) {
+                showNotification('Một số file vượt quá giới hạn 10MB và đã bị bỏ qua.', 'warning');
+            }
+            
+            validFiles.forEach(file => {
+                attachedFiles.push(file);
+                addAttachmentPreview(file);
+            });
+            
+            if (attachedFiles.length > 0) {
+                attachmentPreview.style.display = 'flex';
+            }
+            
+            fileInput.value = '';
+        });
+
         // Handle Enter key
         messageInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -1762,40 +2007,8 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
             }
         });
 
-        // Go to index
-        function goToIndex() {
-            window.location.href = 'index.html';
-        }
+        // ========== APP INITIALIZATION ==========
 
-        // Logout
-        function logout() {
-            if (auth) {
-                auth.signOut().then(() => {
-                    localStorage.removeItem('user');
-                    // Clean up listeners
-                    cleanupFirestoreListeners();
-                    // Xóa tất cả lịch sử chat
-                    Object.keys(sessionStorage).forEach(key => {
-                        if (key.startsWith('chatHistory_')) {
-                            sessionStorage.removeItem(key);
-                        }
-                    });
-                    window.location.href = 'auth.html';
-                }).catch(error => {
-                    console.error('Lỗi đăng xuất:', error);
-                    window.location.href = 'auth.html';
-                });
-            } else {
-                window.location.href = 'auth.html';
-            }
-        }
-
-        // Clear chat history on page unload
-        window.addEventListener('beforeunload', function() {
-            cleanupFirestoreListeners();
-        });
-
-        // Initialize app
         async function initializeApp() {
             // Add notification styles
             if (!document.querySelector('#notification-styles')) {
@@ -1816,20 +2029,17 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
             
             initializeUser();
             
-            // Chỉ load data khi cần (lazy loading)
             setTimeout(() => {
                 loadSubjectKnowledge();
                 loadHomeworkData();
             }, 1000);
             
-            // Set up subject buttons
             subjectButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     selectSubject(button.dataset.subject);
                 });
             });
             
-            // Set up sidebar toggle
             sidebarToggle.addEventListener('click', function() {
                 if (sidebar.classList.contains('show')) {
                     hideSidebar();
@@ -1840,7 +2050,6 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
             
             sidebarOverlay.addEventListener('click', hideSidebar);
             
-            // Close sidebar when clicking outside on mobile
             document.addEventListener('click', (e) => {
                 if (window.innerWidth <= 768 && 
                     !sidebar.contains(e.target) && 
@@ -1850,19 +2059,42 @@ Phong cách: Nhiệt tình, kiên nhẫn, khuyến khích học sinh tự tư du
                 }
             });
             
-            // Auto-hide sidebar on desktop when resizing to mobile
             window.addEventListener('resize', function() {
                 if (window.innerWidth > 768) {
                     hideSidebar();
                 }
             });
             
-            // Focus on input
             setTimeout(() => {
                 messageInput.focus();
             }, 500);
             
-            console.log('✅ Chatbot đã sẵn sàng');
+            console.log('✅ Chatbot đã sẵn sàng với hỗ trợ PDF → Ảnh');
+        }
+
+        // ========== GLOBAL FUNCTIONS ==========
+
+        function goToIndex() {
+            window.location.href = 'index.html';
+        }
+
+        function logout() {
+            if (auth) {
+                auth.signOut().then(() => {
+                    localStorage.removeItem('user');
+                    Object.keys(sessionStorage).forEach(key => {
+                        if (key.startsWith('chatHistory_')) {
+                            sessionStorage.removeItem(key);
+                        }
+                    });
+                    window.location.href = 'auth.html';
+                }).catch(error => {
+                    console.error('Lỗi đăng xuất:', error);
+                    window.location.href = 'auth.html';
+                });
+            } else {
+                window.location.href = 'auth.html';
+            }
         }
 
         // Start the app
